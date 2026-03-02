@@ -649,9 +649,13 @@ function showNotableFigures() {
         const displayCoords = getJitteredCoords(figure.coords, offsetTracker);
         bounds.extend(displayCoords);
 
+        // Determine color based on if they are still alive (Günümüz)
+        const isAlive = figure.era && figure.era.includes('Günümüz');
+        const markerColor = isAlive ? '#2ecc71' : '#e74c3c'; // Green for living, Red for historical
+
         const figureIcon = L.divIcon({
             className: 'marker-wrapper',
-            html: `<div class="inner-dot" style="width: 16px; height: 16px; background-color: #1abc9c; border: 2px solid #fff; box-shadow: 0 0 10px #1abc9c;"></div>`,
+            html: `<div class="inner-dot" style="width: 16px; height: 16px; background-color: ${markerColor}; border: 2px solid #fff; box-shadow: 0 0 10px ${markerColor};"></div>`,
             iconSize: [44, 44],
             iconAnchor: [22, 22]
         });
@@ -660,7 +664,7 @@ function showNotableFigures() {
         const imageHtml = `<div id="${imageId}-wrap" style="width:100%; height:140px; background:rgba(0,0,0,0.2); border-radius:6px; display:flex; align-items:center; justify-content:center; margin-bottom:12px; overflow:hidden;"><span style="color:var(--text-secondary); font-size:0.8rem;">Yükleniyor...</span></div>`;
 
         const popup = L.popup({ maxWidth: 300 })
-            .setContent(`${imageHtml}<b>${figure.name}</b><br><span style="color: #1abc9c; font-weight: bold;">${figure.highlight}</span><br><div style="margin: 5px 0; font-size: 0.85em; color: var(--text-secondary);">📍 ${figure.location} • ⏳ ${figure.era}</div><small>${figure.description}</small>`);
+            .setContent(`${imageHtml}<b>${figure.name}</b><br><span style="color: ${markerColor}; font-weight: bold;">${figure.highlight}</span><br><div style="margin: 5px 0; font-size: 0.85em; color: var(--text-secondary);">📍 ${figure.location} • ⏳ ${figure.era}</div><small>${figure.description}</small>`);
 
         const marker = L.marker(displayCoords, { icon: figureIcon })
             .bindPopup(popup)
@@ -696,9 +700,14 @@ function showNotableFigures() {
     card.innerHTML = `
         <h2 style="color: #1abc9c;">Tarihte İz Bırakan İsimler</h2>
         <p>Bilimden felsefeye, siyasetten sanata kadar dünya tarihine yön vermiş olan önemli Yahudi entelektüellerinin, bilim insanlarının ve liderlerinin tarih boyunca etki bıraktığı merkezler.</p>
-        <div class="detail-tags">
-            <span class="tag">Önemli Şahsiyetler</span>
-            <span class="tag">${notableFigures.length} İsim</span>
+        <div class="detail-tags" style="gap: 8px;">
+            <span id="tag-filter-all" class="tag filter-tag" onclick="filterNotableFigures('all')" style="cursor:pointer; opacity:1; transition:0.3s;">● Tüm İsimler</span>
+            <span id="tag-filter-historical" class="tag filter-tag" onclick="filterNotableFigures('historical')" style="cursor:pointer; opacity:0.4; transition:0.3s; background: rgba(231, 76, 60, 0.15); border: 1px solid rgba(231, 76, 60, 0.5); color: #e74c3c; font-weight: 600;">● Tarihi İsimler</span>
+            <span id="tag-filter-living" class="tag filter-tag" onclick="filterNotableFigures('living')" style="cursor:pointer; opacity:0.4; transition:0.3s; background: rgba(46, 204, 113, 0.15); border: 1px solid rgba(46, 204, 113, 0.5); color: #2ecc71; font-weight: 600;">● Yaşayanlar</span>
+            <span id="tag-filter-business" class="tag filter-tag" onclick="filterNotableFigures('business')" style="cursor:pointer; opacity:0.4; transition:0.3s; background: rgba(241, 196, 15, 0.15); border: 1px solid rgba(241, 196, 15, 0.5); color: #f1c40f; font-weight: 600;">💼 İş İnsanı</span>
+            <span id="tag-filter-science" class="tag filter-tag" onclick="filterNotableFigures('science')" style="cursor:pointer; opacity:0.4; transition:0.3s; background: rgba(52, 152, 219, 0.15); border: 1px solid rgba(52, 152, 219, 0.5); color: #3498db; font-weight: 600;">🔬 Bilim İnsanı</span>
+            <span id="tag-filter-politics" class="tag filter-tag" onclick="filterNotableFigures('politics')" style="cursor:pointer; opacity:0.4; transition:0.3s; background: rgba(155, 89, 182, 0.15); border: 1px solid rgba(155, 89, 182, 0.5); color: #9b59b6; font-weight: 600;">🏛️ Siyasetçi</span>
+            <span id="tag-filter-count" class="tag" style="background: rgba(255,255,255,0.05); cursor:default;">${notableFigures.length} Toplam İsim</span>
         </div>
         <button onclick="resetMap()" style="
             margin-top: 20px;
@@ -723,6 +732,68 @@ function showNotableFigures() {
         easeLinearity: 0.25
     });
 }
+
+// Filter Notable Figures by their alive/deceased status and professions
+window.filterNotableFigures = function (filterType) {
+    if (!markers) return;
+
+    currentLayerGroup.clearLayers();
+    const bounds = L.latLngBounds([]);
+    let visibleCount = 0;
+
+    // reset tags styles
+    document.querySelectorAll('.filter-tag').forEach(tag => {
+        tag.style.opacity = '0.4';
+    });
+
+    const activeTag = document.getElementById(`tag-filter-${filterType}`);
+    if (activeTag) activeTag.style.opacity = '1';
+
+    const sidebarItems = document.querySelectorAll('#timeline-events .timeline-item');
+
+    const scienceNames = ["Albert Einstein", "Sigmund Freud", "John von Neumann", "Niels Bohr", "J. Robert Oppenheimer", "Émile Durkheim"];
+    const politicsNames = ["Theodor Herzl", "David Ben-Gurion", "Chaim Weizmann", "Golda Meir", "Yitzhak Rabin", "Menachem Begin", "Shimon Peres", "Benjamin Disraeli", "Leon Trotsky (Lev Troçki)", "Volodimir Zelenski", "Binyamin Netanyahu", "Janet Yellen", "Michael Bloomberg"];
+    const philosophyNames = ["Maimonides (İbn Meymun)", "Baruch Spinoza", "Karl Marx", "Franz Kafka", "Rashi (Şlomo Yitzhaki)", "Moses Mendelssohn"];
+    const artNames = ["Bob Dylan", "Leonard Cohen", "Steven Spielberg", "Woody Allen", "Jerry Seinfeld", "Amy Winehouse", "Mark Zuckerberg"]; // Zuckerberg is more tech/business but often grouped with influential figures
+
+    notableFigures.forEach((figure, index) => {
+        const isAlive = figure.era && figure.era.includes('Günümüz');
+
+        let shouldShow = true;
+        if (filterType === 'historical') shouldShow = !isAlive;
+        else if (filterType === 'living') shouldShow = isAlive;
+        else if (filterType === 'science') shouldShow = scienceNames.includes(figure.name);
+        else if (filterType === 'politics') shouldShow = politicsNames.includes(figure.name);
+        else if (filterType === 'philosophy') shouldShow = philosophyNames.includes(figure.name);
+        else if (filterType === 'art') shouldShow = artNames.includes(figure.name);
+        else if (filterType === 'business') {
+            shouldShow = (!scienceNames.includes(figure.name) &&
+                !philosophyNames.includes(figure.name) &&
+                !artNames.includes(figure.name) &&
+                (!politicsNames.includes(figure.name) || figure.name === "Michael Bloomberg")); // Michael Bloomberg is both politics and business
+        }
+
+        if (shouldShow && markers[index]) {
+            markers[index].addTo(currentLayerGroup);
+            bounds.extend(markers[index].getLatLng());
+            visibleCount++;
+            if (sidebarItems[index]) sidebarItems[index].style.display = 'block';
+        } else {
+            if (sidebarItems[index]) sidebarItems[index].style.display = 'none';
+        }
+    });
+
+    if (visibleCount > 0 && bounds.isValid()) {
+        map.flyToBounds(bounds, {
+            padding: [50, 50],
+            duration: 1.0,
+            easeLinearity: 0.25
+        });
+    }
+
+    const countTag = document.getElementById('tag-filter-count');
+    if (countTag) countTag.innerText = `${visibleCount} İsim Gösteriliyor`;
+};
 
 // Show Turkey Data
 function showTurkeyData() {
@@ -876,7 +947,7 @@ function showAnalysisData() {
 
     // Build HTML
     let html = `
-        <h2>📊 Nüfus / Sermaye Analizi</h2>
+        <h2>Nüfus / Sermaye Analizi</h2>
         <p class="subtitle">Yahudi nüfusu ve ekonomik etki oranlarının ülkelere göre karşılaştırması</p>
 
         <div class="analysis-summary-grid">
@@ -902,7 +973,7 @@ function showAnalysisData() {
             <!-- Sol Sütun: Ülkeler -->
             <div class="analysis-column">
                 <div style="margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">
-                    <h2 style="font-size: 1.3rem;">🌍 Bölgesel Demografi & Servet Dağılımı</h2>
+                    <h2 style="font-size: 1.3rem; color: var(--accent);">Bölgesel Demografi & Servet Dağılımı</h2>
                 </div>
     `;
 
@@ -928,13 +999,15 @@ function showAnalysisData() {
                 <div class="bar-row">
                     <div class="bar-label">Nüfus</div>
                     <div class="bar-track">
-                        <div class="bar-fill pop" style="width: 0%;" data-width="${popWidth}%">${item.populationRatio}</div>
+                        <div class="bar-fill pop" style="width: 0%;" data-width="${popWidth}%"></div>
+                        <div class="bar-text pop-text">${item.populationRatio}</div>
                     </div>
                 </div>
                 <div class="bar-row">
                     <div class="bar-label">Sermaye</div>
                     <div class="bar-track">
-                        <div class="bar-fill wealth" style="width: 0%;" data-width="${wealthWidth}%">${item.wealthRatio}</div>
+                        <div class="bar-fill wealth" style="width: 0%;" data-width="${wealthWidth}%"></div>
+                        <div class="bar-text wealth-text">${item.wealthRatio}</div>
                     </div>
                 </div>
                 ${sectorsHtml}
@@ -946,43 +1019,46 @@ function showAnalysisData() {
     html += `
             </div>
             
-            <!-- Sağ Sütun: Şirketler -->
+            <!-- Sağ Sütun: Kişiler -->
             <div class="analysis-column">
-                <div style="margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">
-                    <h2 style="font-size: 1.3rem;">🏢 Öne Çıkan Şirketler & Holdingler</h2>
+                <div style="margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
+                    <h2 style="font-size: 1.3rem; color: var(--accent);">Tarihi ve Güncel Zenginler</h2>
                 </div>
+
+                <!-- Kişiler Listesi -->
+                <div id="analysis-figures-list">
     `;
 
-    if (typeof majorCompanies !== 'undefined') {
-        majorCompanies.forEach(sector => {
-            let companiesHtml = '';
-            sector.companies.forEach(c => {
-                companiesHtml += `
-                    <div style="display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <div class="company-value-badge" style="background: linear-gradient(135deg, ${sector.color}, ${sector.color}aa); color: #000;">
-                            ${c.value}
-                        </div>
-                        <div style="flex: 1; padding-top: 2px;">
-                            <div style="font-family: var(--font-serif); font-weight: 600; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 3px;">${c.name}</div>
-                            <div style="font-size: 0.7rem; font-weight: 600; color: ${sector.color}; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
-                                <span style="opacity: 0.7;">◆</span> ${c.founder}
-                            </div>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; font-weight: 300;">${c.desc}</div>
-                        </div>
+    if (typeof wealthyFigures !== 'undefined') {
+        let figuresHtml = '';
+        wealthyFigures.forEach((f, idx) => {
+            const num = (idx + 1).toString();
+            figuresHtml += `
+                <div style="display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div class="company-value-badge" style="background: linear-gradient(135deg, #d4af37, #c5a059); color: #000; min-width: 70px;">
+                        ${f.netWorth}
                     </div>
-                `;
-            });
-
-            html += `
-                <div class="analysis-card" style="border-left: 3px solid ${sector.color};">
-                    <h3><span class="flag">${sector.icon}</span> ${sector.sector} <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 400;">(${sector.companies.length} şirket)</span></h3>
-                    ${companiesHtml}
+                    <div style="flex: 1; padding-top: 2px;">
+                        <div style="font-family: var(--font-serif); font-weight: 600; font-size: 1.1rem; color: var(--accent); margin-bottom: 3px;">${num}. ${f.name}</div>
+                        <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
+                            ${f.title} <span style="opacity:0.5; margin:0 4px;">|</span> <span style="color:#d4af37;">${f.source}</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; font-weight: 300;">${f.desc}</div>
+                    </div>
                 </div>
             `;
         });
+
+        html += `
+            <div class="analysis-card" style="border-left: 3px solid #d4af37;">
+                <h3>Tarihi ve Güncel Zenginler</h3>
+                ${figuresHtml}
+            </div>
+        `;
     }
 
     html += `
+                </div>
             </div>
         </div>
     `;
@@ -1002,7 +1078,7 @@ function showAnalysisData() {
     // Update detail card
     const card = document.getElementById('initial-card');
     card.innerHTML = `
-        <h2 style="color: #f39c12;">📊 Analiz Panosu</h2>
+        <h2 style="color: #f39c12;">Analiz Panosu</h2>
         <p>Ülkelere göre nüfus ve sermaye analizini inceliyorsunuz. Sektörlere tıklayarak öne çıkan isimlere ulaşabilirsiniz.</p>
     `;
 }
@@ -1071,6 +1147,8 @@ function setupTimeSlider() {
         }
     });
 }
+
+// Removed switchAnalysisTab because Holdingler tab was removed
 
 // Map specific sectors to prominent notable figures and fly to them
 function focusOnFigure(sectorName) {
