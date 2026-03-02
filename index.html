@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yahudi Sürgünleri Haritası</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation & Timeline -->
+        <aside class="sidebar">
+            <header class="sidebar-header">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <h1>Tarih Boyunca<br><span>Yahudi Sürgünleri</span></h1>
+                    <button id="theme-toggle" class="theme-btn" aria-label="Temayı Değiştir" title="Açık/Koyu Tema">
+                        <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </button>
+                </div>
+                <p>Diasporanın kökenleri ve göç yolları</p>
+            </header>
+
+            <div class="timeline-container" id="timeline">
+                <!-- Timeline items will be injected here via JS -->
+            </div>
+
+            <footer class="sidebar-footer">
+                <button id="show-holy-places-btn" class="action-btn"
+                    style="margin-bottom: 10px; background: rgba(155, 89, 182, 0.1); border-color: #9b59b6; color: #9b59b6;">
+                    Kutsal ve Tarihi Mekanları Göster
+                </button>
+                <button id="show-figures-btn" class="action-btn"
+                    style="margin-bottom: 10px; background: rgba(26, 188, 156, 0.1); border-color: #1abc9c; color: #1abc9c;">
+                    Önemli İsimler ve Etki Merkezleri
+                </button>
+                <button id="show-turkey-btn" class="action-btn"
+                    style="margin-bottom: 10px; background: rgba(231, 76, 60, 0.1); border-color: #e74c3c; color: #e74c3c;">
+                    Türkiye Yahudileri
+                </button>
+                <button id="show-analysis-btn" class="action-btn"
+                    style="margin-bottom: 10px; background: rgba(243, 156, 18, 0.1); border-color: #f39c12; color: #f39c12;">
+                    Nüfus / Sermaye Analizi
+                </button>
+                <button id="show-population-btn" class="action-btn">
+                    Güncel (2026) Nüfus Dağılımını Göster
+                </button>
+                <p style="margin-top: 10px;">Veriler tarihi kaynaklardan derlenmiştir.</p>
+            </footer>
+        </aside>
+
+        <!-- Map Container -->
+        <main class="map-wrapper">
+            <button id="mobile-toggle-btn" class="mobile-toggle-btn" aria-label="Menüyü Aç/Kapat"
+                title="Menüyü Aç/Kapat">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <div id="sidebar-overlay" class="sidebar-overlay"></div>
+            <div id="map"></div>
+
+            <!-- Detail Card (Floating) -->
+            <div class="detail-card active" id="initial-card">
+                <h2>Zaman Çizelgesini Keşfedin</h2>
+                <p>Sol taraftaki menüden tarihi bir olay seçerek veya harita üzerindeki noktalara tıklayarak sürgün
+                    rotalarını ve detayları görüntüleyebilirsiniz.</p>
+                <div class="pulse-indicator"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
