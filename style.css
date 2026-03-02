@@ -197,33 +197,67 @@ body {
 }
 
 .sidebar-footer {
-    padding: 15px 30px;
+    padding: 8px 10px;
     border-top: 1px solid var(--border-color);
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    text-align: center;
 }
 
-.action-btn {
-    width: 100%;
-    padding: 12px;
-    background: rgba(212, 175, 55, 0.1);
-    color: var(--accent);
-    border: 1px solid var(--accent);
+.tab-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+}
+
+.tab-btn {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 4px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    font-family: var(--font-sans);
-    font-weight: 600;
+    color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
+    font-family: var(--font-sans);
 }
 
-.action-btn:hover {
-    background: var(--accent);
-    color: #fff;
+.tab-btn .tab-icon {
+    font-size: 1.1rem;
+    line-height: 1;
 }
 
-body.light-theme .action-btn:hover {
-    color: #000;
+.tab-btn .tab-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.tab-btn:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--accent);
+    color: var(--text-primary);
+}
+
+.tab-btn.active {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
+
+body.light-theme .tab-btn {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+body.light-theme .tab-btn.active {
+    background: rgba(212, 175, 55, 0.15);
 }
 
 /* Map Area */
@@ -530,12 +564,18 @@ body.light-theme .dest-tooltip {
     }
 
     .sidebar-footer {
-        padding: 10px 15px;
+        padding: 6px 6px;
     }
 
-    .action-btn {
-        padding: 10px;
-        font-size: 0.8rem;
-        margin-bottom: 8px !important;
+    .tab-btn {
+        padding: 5px 2px;
+    }
+
+    .tab-btn .tab-icon {
+        font-size: 1rem;
+    }
+
+    .tab-btn .tab-label {
+        font-size: 0.5rem;
     }
 }

@@ -42,14 +42,22 @@ document.addEventListener('DOMContentLoaded', () => {
     drawInitialMarkers();
     setupThemeToggle();
 
-    document.getElementById('show-population-btn').addEventListener('click', () => { closeSidebarOnMobile(); showPopulation2026(); });
-    document.getElementById('show-holy-places-btn').addEventListener('click', () => { closeSidebarOnMobile(); showHolyPlaces(); });
-    document.getElementById('show-figures-btn').addEventListener('click', () => { closeSidebarOnMobile(); showNotableFigures(); });
-    document.getElementById('show-turkey-btn').addEventListener('click', () => { closeSidebarOnMobile(); showTurkeyData(); });
-    document.getElementById('show-analysis-btn').addEventListener('click', () => { closeSidebarOnMobile(); showAnalysisData(); });
+    // Tab system
+    document.getElementById('show-exile-btn').addEventListener('click', () => { setActiveTab('show-exile-btn'); resetMap(); });
+    document.getElementById('show-population-btn').addEventListener('click', () => { setActiveTab('show-population-btn'); closeSidebarOnMobile(); showPopulation2026(); });
+    document.getElementById('show-holy-places-btn').addEventListener('click', () => { setActiveTab('show-holy-places-btn'); closeSidebarOnMobile(); showHolyPlaces(); });
+    document.getElementById('show-figures-btn').addEventListener('click', () => { setActiveTab('show-figures-btn'); closeSidebarOnMobile(); showNotableFigures(); });
+    document.getElementById('show-turkey-btn').addEventListener('click', () => { setActiveTab('show-turkey-btn'); closeSidebarOnMobile(); showTurkeyData(); });
+    document.getElementById('show-analysis-btn').addEventListener('click', () => { setActiveTab('show-analysis-btn'); closeSidebarOnMobile(); showAnalysisData(); });
 
     setupMobileToggle();
 });
+
+function setActiveTab(activeId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.getElementById(activeId);
+    if (activeBtn) activeBtn.classList.add('active');
+}
 
 function setupMobileToggle() {
     const toggleBtn = document.getElementById('mobile-toggle-btn');
