@@ -731,12 +731,15 @@ body.light-theme .dest-tooltip {
     }
 
     .detail-card {
-        bottom: 15px;
-        right: 15px;
-        left: 15px;
+        bottom: calc(15px + env(safe-area-inset-bottom, 20px));
+        right: 10px;
+        left: 10px;
         width: auto;
-        padding: 15px;
+        padding: 12px;
         transform: translateY(0);
+        max-height: 35vh;
+        overflow-y: auto;
+        font-size: 0.85rem;
     }
 
     .detail-card h2 {
