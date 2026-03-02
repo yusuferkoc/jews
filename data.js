@@ -361,6 +361,70 @@ const analysisData = [
         wealthRatio: "Tahmini %15",
         sectors: ["Lüks Tüketim & Moda", "Telekomünikasyon", "Medya", "Bankacılık"],
         description: "Avrupa'nın en büyük Yahudi nüfusuna sahip ülkesi olan Fransa'da, özellikle Chanel gibi köklü moda devleri (Wertheimer ailesi), Altice gibi telekomünikasyon ağları (Drahi) ve medya-finans sektörlerinin en stratejik noktalarında önemli oranlarda aktif pay sahibidirler."
+    },
+    {
+        country: "Kanada",
+        coords: [56.1304, -106.3468],
+        populationRatio: "%1.0",
+        wealthRatio: "Tahmini %15-20",
+        sectors: ["Gayrimenkul", "Medya", "Perakende", "Madencilik"],
+        description: "Kanada nüfusunun %1'ini oluşturmalarına rağmen ülkenin en zenginler listesinde (örn. Bronfman ailesi, Reisman, Schwartz) oransal olarak çok yüksek temsil edilirler. Gayrimenkul, medya ve perakende (Indigo, Loblaws) sektörlerinde baskın oyunculardır."
+    },
+    {
+        country: "Avustralya",
+        coords: [-25.2744, 133.7751],
+        populationRatio: "%0.5",
+        wealthRatio: "Tahmini %10-12",
+        sectors: ["Gayrimenkul", "Perakende", "Finans", "Medya"],
+        description: "Avustralya'da Yahudi nüfusu 120.000 civarında olmasına rağmen ülkenin en zengin ailelerinin (Lowy ailesi - Westfield, Pratt ailesi - Visy) önemli bir kısmını oluştururlar. Gayrimenkul ve perakende devlerinin kuruculuğu dikkat çekicidir."
+    },
+    {
+        country: "Güney Afrika",
+        coords: [-30.5595, 22.9375],
+        populationRatio: "%0.08",
+        wealthRatio: "Tahmini %15-20",
+        sectors: ["Madencilik & Elmas", "Finans", "Perakende", "Sigorta"],
+        description: "Güney Afrika'daki Yahudi cemaati nüfusun binde birinden az olmasına rağmen, De Beers elmas imparatorluğu (Oppenheimer ailesi), sigorta devleri ve perakende zincirlerinin kurucuları arasında en yüksek orana sahip azınlık gruplarından biridir."
+    },
+    {
+        country: "İsviçre",
+        coords: [46.8182, 8.2275],
+        populationRatio: "%0.2",
+        wealthRatio: "Tahmini %10-15",
+        sectors: ["Özel Bankacılık", "Emtia Ticareti", "İlaç", "Lüks Saat"],
+        description: "İsviçre'nin dünyaca ünlü özel bankacılık sektöründe ve emtia ticaretinde Yahudi kökenli aileler ve firmalar tarihsel olarak ciddi bir ağırlığa sahiptir. Glencore (Glasenberg), Swatch grubundaki belirli markalar ve ilaç sektöründe etkindirler."
+    },
+    {
+        country: "Ukrayna",
+        coords: [48.3794, 31.1656],
+        populationRatio: "%0.2",
+        wealthRatio: "Tahmini %20-30 (Oligark sınıfı)",
+        sectors: ["Çelik & Metal", "Medya", "Bankacılık", "Tarım"],
+        description: "Bağımsızlık sonrası özelleştirme sürecinde Ukrayna'nın en büyük milyarderlerinin önemli bir bölümü (Kolomoisky, Pinchuk, Rabinovich) Yahudi asıllıdır. Çelik, medya ve bankacılık sektörlerinde en yüksek nüfus-servet oransızlığına sahip ülkelerden biridir."
+    },
+    {
+        country: "Brezilya",
+        coords: [-14.2350, -51.9253],
+        populationRatio: "%0.04",
+        wealthRatio: "Tahmini %8-12",
+        sectors: ["Bankacılık", "Perakende", "Medya", "Gayrimenkul"],
+        description: "Latin Amerika'nın en büyük ekonomisinde Yahudi nüfusu 90.000 civarındadır ancak Safra ailesi (bankacılık), Lemann ailesi (3G Capital - Burger King, AB InBev) gibi isimler ülkenin ve dünyanın en zenginleri arasındadır."
+    },
+    {
+        country: "Arjantin",
+        coords: [-38.4161, -63.6167],
+        populationRatio: "%0.4",
+        wealthRatio: "Tahmini %10-15",
+        sectors: ["Tarım & Gıda", "Finans", "Gayrimenkul", "Medya"],
+        description: "Latin Amerika'nın Yahudi nüfusu en yüksek ülkesi olan Arjantin'de topluluk özellikle Buenos Aires'in finans, tarım ticareti ve medya sektörlerinde oransal olarak çok yüksek bir ekonomik etkiye sahiptir."
+    },
+    {
+        country: "Macaristan",
+        coords: [47.1625, 19.5033],
+        populationRatio: "%0.5",
+        wealthRatio: "Tahmini %15-20",
+        sectors: ["Finans", "Gayrimenkul", "İlaç", "Telekomünikasyon"],
+        description: "Tarihi olarak Budapeşte'nin ticari hayatının bel kemiğini oluşturan Macar Yahudi toplumu, Holokost sonrası nüfusu ciddi azalmasına rağmen günümüzde de finans, gayrimenkul ve teknoloji sektörlerinde (OTP Bank'ın tarihi kurucu ortakları gibi) güçlü bir temsile sahiptir."
     }
 ];
 

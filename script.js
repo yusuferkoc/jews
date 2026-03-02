@@ -867,7 +867,7 @@ function showAnalysisData() {
                 <div class="stat-label">Küresel Sermaye Etkisi</div>
             </div>
             <div class="summary-stat">
-                <div class="stat-value">6</div>
+                <div class="stat-value">14</div>
                 <div class="stat-label">Analiz Edilen Bölge</div>
             </div>
         </div>
