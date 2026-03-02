@@ -435,6 +435,7 @@ function updateDetailCard(event) {
 }
 
 function resetMap() {
+    hideAnalysisDashboard();
     activeEventId = null;
     animationIntervals.forEach(clearInterval);
     animationIntervals = [];
@@ -457,6 +458,7 @@ function resetMap() {
 
 // Show 2026 Population Data
 function showPopulation2026() {
+    hideAnalysisDashboard();
     activeEventId = null;
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
     currentLayerGroup.clearLayers();
@@ -521,6 +523,7 @@ function showPopulation2026() {
 
 // Show Holy Places Data
 function showHolyPlaces() {
+    hideAnalysisDashboard();
     activeEventId = null;
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
     currentLayerGroup.clearLayers();
@@ -610,6 +613,7 @@ function showHolyPlaces() {
 
 // Show Notable Figures Data
 function showNotableFigures() {
+    hideAnalysisDashboard();
     activeEventId = null;
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
     currentLayerGroup.clearLayers();
@@ -699,6 +703,7 @@ function showNotableFigures() {
 
 // Show Turkey Data
 function showTurkeyData() {
+    hideAnalysisDashboard();
     activeEventId = null;
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
     currentLayerGroup.clearLayers();
@@ -808,88 +813,121 @@ function getJitteredCoords(coords, offsetTracker) {
     ];
 }
 
-// Show Analysis Data
+
+
+// Hide analysis dashboard when switching to other views
+function hideAnalysisDashboard() {
+    const dash = document.getElementById('analysis-dashboard');
+    if (dash) dash.style.display = 'none';
+}
+
+// Show Analysis Dashboard
 function showAnalysisData() {
     activeEventId = null;
-    document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
     currentLayerGroup.clearLayers();
+    animationIntervals.forEach(clearInterval);
+    animationIntervals = [];
 
-    const bounds = L.latLngBounds([]);
+    const dash = document.getElementById('analysis-dashboard');
+    const inner = dash.querySelector('.analysis-inner');
+    dash.style.display = 'block';
 
-    markers = {};
-    const offsetTracker = {};
-    analysisData.forEach((data, index) => {
-        const displayCoords = getJitteredCoords(data.coords, offsetTracker);
-        bounds.extend(displayCoords);
+    // Flag mapping
+    const flags = {
+        'Küresel (Dünya Geneli)': '🌍',
+        'ABD (Amerika Birleşik Devletleri)': '🇺🇸',
+        'Birleşik Krallık': '🇬🇧',
+        'İsrail': '🇮🇱',
+        'Rusya ve Doğu Avrupa Oligarkları': '🇷🇺',
+        'Fransa': '🇫🇷'
+    };
 
-        const analysisIcon = L.divIcon({
-            className: 'marker-wrapper',
-            html: `<div class="inner-dot" style="width: 20px; height: 20px; background-color: #f39c12; border: 2px solid #fff; box-shadow: 0 0 15px #f39c12;"></div>`,
-            iconSize: [44, 44],
-            iconAnchor: [22, 22]
-        });
+    // Parse percentage helper
+    function parsePercent(str) {
+        const match = str.match(/[\d.]+/);
+        return match ? parseFloat(match[0]) : 0;
+    }
 
-        let sectorsHtml = '';
-        if (data.sectors && data.sectors.length > 0) {
-            sectorsHtml = data.sectors.map(sector => `<span onclick="focusOnFigure('${sector}')" onmouseover="this.style.background='rgba(52, 152, 219, 0.3)'" onmouseout="this.style.background='rgba(52, 152, 219, 0.15)'" style="background: rgba(52, 152, 219, 0.15); color: #3498db; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; border: 1px solid #3498db; display: inline-block; margin: 0 4px 4px 0; cursor: pointer; transition: background 0.2s;" title="Bu sektörün önde gelen ismini haritada görmek için tıklayın">${sector}</span>`).join('');
-            sectorsHtml = `<div style="margin-top: 8px;">${sectorsHtml}</div>`;
-        }
+    // Build HTML
+    let html = `
+        <h2>📊 Nüfus / Sermaye Analizi</h2>
+        <p class="subtitle">Yahudi nüfusu ve ekonomik etki oranlarının ülkelere göre karşılaştırması</p>
 
-        const popup = L.popup({ maxWidth: 350 })
-            .setContent(`
-                <b style="font-size:1.1rem;">${data.country}</b><br><br>
-                <div style="background: rgba(243, 156, 18, 0.1); padding: 8px; border-left: 3px solid #f39c12; margin-bottom: 8px;">
-                    <span style="color: var(--text-secondary); font-size: 0.85em;">Ülke Nüfusuna Oranı:</span><br>
-                    <b style="color: #f39c12; font-size: 1.1em;">${data.populationRatio}</b>
-                </div>
-                <div style="background: rgba(46, 204, 113, 0.1); padding: 8px; border-left: 3px solid #2ecc71; margin-bottom: 8px;">
-                    <span style="color: var(--text-secondary); font-size: 0.85em;">Ekonomik Etki / Sermaye Oranı:</span><br>
-                    <b style="color: #2ecc71; font-size: 1.1em;">${data.wealthRatio}</b>
-                </div>
-                ${sectorsHtml}
-                <small style="display:block; margin-top: 10px; line-height: 1.4;">${data.description}</small>
-            `);
-
-        const marker = L.marker(displayCoords, { icon: analysisIcon })
-            .bindPopup(popup)
-            .addTo(currentLayerGroup);
-
-        markers[index] = marker;
-    });
-
-    buildSidebar(analysisData, 'analysis');
-
-    // Update Detail Card
-    const card = document.getElementById('initial-card');
-    card.innerHTML = `
-        <h2 style="color: #f39c12;">Nüfus ve Sermaye Analizi</h2>
-        <p>Demografik olarak dünyada veya bulundukları ülkelerde çok küçük yüzdelik dilimlerde olmalarına rağmen, küresel ekonomiyi, endüstriyel inovasyonları ve finans ağlarını yönlendirmedeki asimetrik güçlerinin bölgelere göre tahmini analizi.</p>
-        <div class="detail-tags">
-            <span class="tag">Ekonomi-Politik Dağılım</span>
-            <span class="tag">Sermaye Ağları</span>
+        <div class="analysis-summary-grid">
+            <div class="summary-stat">
+                <div class="stat-value">15.7M</div>
+                <div class="stat-label">Dünya Yahudi Nüfusu</div>
+            </div>
+            <div class="summary-stat">
+                <div class="stat-value">%0.2</div>
+                <div class="stat-label">Dünya Nüfus Oranı</div>
+            </div>
+            <div class="summary-stat">
+                <div class="stat-value">%20+</div>
+                <div class="stat-label">Küresel Sermaye Etkisi</div>
+            </div>
+            <div class="summary-stat">
+                <div class="stat-value">6</div>
+                <div class="stat-label">Analiz Edilen Bölge</div>
+            </div>
         </div>
-        <button onclick="resetMap()" style="
-            margin-top: 20px;
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: var(--font-sans);
-            font-size: 0.8rem;
-            transition: all 0.2s;
-        " onmouseover="this.style.color='var(--text-primary)'; this.style.borderColor='var(--accent)'" 
-           onmouseout="this.style.color='var(--text-secondary)'; this.style.borderColor='var(--border-color)'">
-            ← Tarihi Sürgünlere Dön
-        </button>
     `;
 
-    map.flyToBounds(bounds, {
-        padding: [50, 50],
-        duration: 2.0,
-        easeLinearity: 0.25
+    analysisData.forEach(item => {
+        const popVal = parsePercent(item.populationRatio);
+        const wealthVal = parsePercent(item.wealthRatio);
+        const popWidth = Math.max(3, Math.min(popVal * 1.3, 100));
+        const wealthWidth = Math.max(8, Math.min(wealthVal * 1.3, 100));
+        const flag = flags[item.country] || '📍';
+
+        let sectorsHtml = '';
+        if (item.sectors) {
+            sectorsHtml = '<div class="sector-grid">';
+            item.sectors.forEach(s => {
+                sectorsHtml += `<span class="sector-badge" onclick="hideAnalysisDashboard(); focusOnFigure('${s}')">${s}</span>`;
+            });
+            sectorsHtml += '</div>';
+        }
+
+        html += `
+            <div class="analysis-card">
+                <h3><span class="flag">${flag}</span> ${item.country}</h3>
+                <div class="bar-row">
+                    <div class="bar-label">Nüfus</div>
+                    <div class="bar-track">
+                        <div class="bar-fill pop" style="width: 0%;" data-width="${popWidth}%">${item.populationRatio}</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Sermaye</div>
+                    <div class="bar-track">
+                        <div class="bar-fill wealth" style="width: 0%;" data-width="${wealthWidth}%">${item.wealthRatio}</div>
+                    </div>
+                </div>
+                ${sectorsHtml}
+                <p class="analysis-desc">${item.description}</p>
+            </div>
+        `;
     });
+
+    inner.innerHTML = html;
+
+    // Animate bars
+    setTimeout(() => {
+        inner.querySelectorAll('.bar-fill').forEach(bar => {
+            bar.style.width = bar.getAttribute('data-width');
+        });
+    }, 100);
+
+    // Update sidebar
+    buildSidebar(analysisData, 'analysis');
+
+    // Update detail card
+    const card = document.getElementById('initial-card');
+    card.innerHTML = `
+        <h2 style="color: #f39c12;">📊 Analiz Panosu</h2>
+        <p>Ülkelere göre nüfus ve sermaye analizini inceliyorsunuz. Sektörlere tıklayarak öne çıkan isimlere ulaşabilirsiniz.</p>
+    `;
 }
 
 // Map specific sectors to prominent notable figures and fly to them
