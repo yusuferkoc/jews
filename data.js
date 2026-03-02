@@ -220,6 +220,78 @@ const holyPlaces = [
         highlight: "Antik Sinagog",
         description: "Kuzey Afrika'nın en eski sinagogudur. Köklerinin MÖ 6. yüzyıldaki ilk Babil Sürgünü'ne utandığına inanılır.",
         wikiPage: "El_Ghriba_Synagogue"
+    },
+    {
+        name: "Eski Yeni Sinagog (Prag)", coords: [50.0899, 14.4187],
+        highlight: "Avrupa'nın En Eskisi",
+        description: "1270'te tamamlanan ve Avrupa'da hala aktif olarak kullanılan en eski sinagogdur. Efsanevi Golem hikayesiyle de bilinir.",
+        wikiPage: "Old-New_Synagogue"
+    },
+    {
+        name: "Dohány Sokağı Sinagogu (Budapeşte)", coords: [47.4959, 19.0605],
+        highlight: "Avrupa'nın En Büyüğü",
+        description: "Dünyanın en büyük ikinci, Avrupa'nın ise en büyük sinagogudur. 19. yüzyıldaki Neolog (liberal) Yahudilik akımının merkezidir.",
+        wikiPage: "Dohány_Street_Synagogue"
+    },
+    {
+        name: "Crown Heights, Brooklyn (New York)", coords: [40.6681, -73.9448],
+        highlight: "Modern Hasidik Merkez",
+        description: "Dünya çapında etkili olan Ortodoks Chabad-Lubavitch hareketinin küresel karargahı (770 Eastern Parkway) buradadır.",
+        wikiPage: "770_Eastern_Parkway"
+    },
+    {
+        name: "Yad Vashem (Kudüs)", coords: [31.7742, 35.1755],
+        highlight: "Holokost Anma Merkezi",
+        description: "İsrail'in Holokost şehitleri ve kahramanları için kurduğu ulusal anıt ve müzedir. Modern Yahudi kimliği için kritik bir noktadır.",
+        wikiPage: "Yad_Vashem"
+    },
+    {
+        name: "Babi Yar (Kiev)", coords: [50.4795, 30.4485],
+        highlight: "Katliam Anıtı",
+        description: "Eylül 1941'de sadece iki gün içinde 33.771 Kievli Yahudinin Naziler tarafından kurşuna dizildiği trajik alan.",
+        wikiPage: "Babi_Yar"
+    },
+    {
+        name: "Sura ve Pumbedita (Irak)", coords: [32.5364, 44.4208], // Using Babylon coords for general Talmudic academies region
+        highlight: "Antik Eğitim Merkezleri",
+        description: "Babil Sürgünü sonrası kurulan, Babil Talmudu'nun yazıldığı antik Yeshivalar (din okulları). Yüzyıllarca Yahudi hukukunu şekillendirdi.",
+        wikiPage: "Talmudic_academies_in_Babylonia"
+    },
+    {
+        name: "Vilnius (Vilna)", coords: [54.6872, 25.2797],
+        highlight: "Litvanya'nın Kudüs'ü",
+        description: "Holokost öncesi Avrupa'da Yahudi ruhani liderliğinin ve entelektüel yaşamın ('Litvak' kültürü) kalbiydi. Ünlü Vilna Gaon burada yaşadı.",
+        wikiPage: "Vilna_Gaon"
+    },
+    {
+        name: "Sina Dağı (Mısır)", coords: [28.5391, 33.9749],
+        highlight: "On Emir'in Yeri",
+        description: "Tevrat'ta Musa peygambere On Emir'in ve Tevrat'ın verildiğine inanılan kutsal dağı barındıran tarihi yarımada.",
+        wikiPage: "Mount_Sinai"
+    },
+    {
+        name: "Touro Sinagogu (Rhode Island, ABD)", coords: [41.4886, -71.3115],
+        highlight: "ABD'nin En Eski Sinagogu",
+        description: "1763'te tamamlanan ve hala ayakta olan ABD'deki en eski sinagogdur. George Washington'un dini özgürlükler mektubuna ev sahipliği yapmıştır.",
+        wikiPage: "Touro_Synagogue"
+    },
+    {
+        name: "Emanu-El Tapınağı (New York)", coords: [40.7672, -73.9696],
+        highlight: "Reform Yahudiliği Merkezi",
+        description: "Dünyanın en büyük sinagoglarından biridir ve Amerika'daki Reform Yahudiliği hareketinin amiral gemisi konumundadır.",
+        wikiPage: "Temple_Emanu-El_of_New_York"
+    },
+    {
+        name: "Boro Park, Brooklyn (New York)", coords: [40.6339, -73.9968],
+        highlight: "Ortodoks Nüfus Merkezi",
+        description: "İsrail dışındaki en yoğun Ortodoks Yahudi ve Hasidik nüfus barındıran semtlerden biridir, Amerikan Yahudi kültürünü derinden yaşatır.",
+        wikiPage: "Borough_Park,_Brooklyn"
+    },
+    {
+        name: "Yeshiva Üniversitesi (New York)", coords: [40.8504, -73.9292],
+        highlight: "Modern Ortodoks Akademi",
+        description: "Geleneksel Yahudi eğitimi (Torah) ile seküler Batı eğitimini birleştiren (Torah Umadda) dünyadaki en saygın akademik kurumlardan biridir.",
+        wikiPage: "Yeshiva_University"
     }
 ];
 
@@ -428,3 +500,85 @@ const analysisData = [
     }
 ];
 
+const majorCompanies = [
+    {
+        sector: "Teknoloji",
+        icon: "💻",
+        color: "#c5a059", // copper-gold
+        companies: [
+            { name: "Google (Alphabet)", founder: "Larry Page & Sergey Brin", value: "$1.9T", desc: "Dünyanın en büyük arama motoru ve reklam platformu" },
+            { name: "Meta (Facebook)", founder: "Mark Zuckerberg", value: "$1.4T", desc: "WhatsApp, Instagram dahil en büyük sosyal medya holdingi" },
+            { name: "Oracle", founder: "Larry Ellison", value: "$380B", desc: "Kurumsal veritabanı ve bulut altyapısı devi" },
+            { name: "Dell Technologies", founder: "Michael Dell", value: "$95B", desc: "Dünyanın en büyük bilgisayar üreticilerinden" },
+            { name: "OpenAI", founder: "Sam Altman (CEO)", value: "$150B+", desc: "ChatGPT ve yapay zeka devriminin öncüsü" },
+            { name: "Broadcom", founder: "Henry Samueli", value: "$800B", desc: "Yarı iletken ve altyapı yazılımları devi" },
+            { name: "Qualcomm", founder: "Andrew Viterbi & Irwin Jacobs", value: "$190B", desc: "Mobil çip ve telekomünikasyon teknoloji lideri" }
+        ]
+    },
+    {
+        sector: "Finans & Yatırım",
+        icon: "🏦",
+        color: "#d4af37", // primary gold
+        companies: [
+            { name: "Goldman Sachs", founder: "Marcus Goldman", value: "$160B", desc: "Wall Street'in en prestijli yatırım bankası" },
+            { name: "Blackstone Group", founder: "Stephen Schwarzman", value: "$950B AUM", desc: "Dünyanın en büyük alternatif yatırım fonu" },
+            { name: "BlackRock", founder: "Larry Fink", value: "$10T+ AUM", desc: "Gezegendeki en büyük varlık yönetim şirketi" },
+            { name: "Citadel", founder: "Ken Griffin*", value: "$60B AUM", desc: "Dünyanın en kârlı hedge fonlarından (*Yahudi değil, sektör bağlamı)" },
+            { name: "Elliott Management", founder: "Paul Singer", value: "$65B AUM", desc: "Aktivist yatırım stratejisiyle ünlü hedge fon" },
+            { name: "Two Sigma", founder: "David Siegel & John Overdeck", value: "$60B AUM", desc: "AI-destekli kantitatif yatırım fonu" },
+            { name: "Soros Fund", founder: "George Soros", value: "$25B AUM", desc: "Bank of England'ı yenen efsanevi fon yöneticisi" }
+        ]
+    },
+    {
+        sector: "Medya & Eğlence",
+        icon: "🎬",
+        color: "#a89f91", // warm grey/silver
+        companies: [
+            { name: "Warner Bros. Discovery", founder: "Warner kardeşler", value: "$25B", desc: "Hollywood'un en köklü stüdyolarından, HBO dahil" },
+            { name: "Comcast (NBCUniversal)", founder: "Ralph Roberts", value: "$160B", desc: "NBC, Universal, DreamWorks dahil medya imparatorluğu" },
+            { name: "Paramount Global", founder: "Sumner Redstone", value: "$8B", desc: "CBS, MTV, Paramount Pictures dahil" },
+            { name: "Bloomberg LP", founder: "Michael Bloomberg", value: "$100B+", desc: "Kürsel finansal veri ve medya devi" },
+            { name: "The New York Times", founder: "Adolph Ochs", value: "$8B", desc: "Amerika'nın en prestijli gazetesi" },
+            { name: "DreamWorks", founder: "Steven Spielberg", value: "NBCU", desc: "NBCUniversal bünyesinde animasyon ve sinema yapım devi" }
+        ]
+    },
+    {
+        sector: "Perakende & Tüketim",
+        icon: "🛍️",
+        color: "#b39b5b", // muted gold
+        companies: [
+            { name: "Starbucks", founder: "Howard Schultz", value: "$105B", desc: "Dünyanın en büyük kahve zinciri (Schultz CEO/Yönetici)" },
+            { name: "Ralph Lauren", founder: "Ralph Lauren (Lifshitz)", value: "$12B", desc: "Küresel lüks moda markası" },
+            { name: "Calvin Klein (PVH)", founder: "Calvin Klein", value: "$6B", desc: "İkonik Amerikan moda markası" },
+            { name: "Estée Lauder", founder: "Estée Lauder", value: "$25B", desc: "Dünyanın en büyük kozmetik şirketlerinden" },
+            { name: "Costco", founder: "Jeffrey Brotman & James Sinegal", value: "$390B", desc: "ABD'nin en büyük toptan satış zinciri" },
+            { name: "Marks & Spencer", founder: "Michael Marks", value: "£5B", desc: "İngiltere'nin en büyük perakende devlerinden" }
+        ]
+    },
+    {
+        sector: "Savunma & Siber Güvenlik",
+        icon: "🛡️",
+        color: "#8c7b60", // bronze
+        companies: [
+            { name: "Check Point Software", founder: "Gil Shwed", value: "$18B", desc: "İsrail merkezli siber güvenlik öncüsü" },
+            { name: "Palo Alto Networks", founder: "Nir Zuk", value: "$120B", desc: "Kurumsal siber güvenliğin küresel lideri" },
+            { name: "CyberArk", founder: "Udi Mokady", value: "$14B", desc: "Privileged access management pazar lideri" },
+            { name: "Wix.com", founder: "Avishai Abrahami", value: "$8B", desc: "İsrail merkezli web sitesi oluşturma platformu" },
+            { name: "Mobileye (Intel)", founder: "Amnon Shashua", value: "$16B", desc: "Otonom sürüş teknolojilerinin küresel lideri" },
+            { name: "NSO Group", founder: "Shalev Hulio & Omri Lavie", value: "Özel", desc: "Pegasus casus yazılımıyla bilinen İsrailli istihbarat firması" }
+        ]
+    },
+    {
+        sector: "İlaç & Biyoteknoloji",
+        icon: "💊",
+        color: "#e5c983", // light gold
+        companies: [
+            { name: "Teva Pharmaceutical", founder: "İsrail merkezli", value: "$18B", desc: "Dünyanın en büyük jenerik ilaç üreticisi" },
+            { name: "Moderna", founder: "Noubar Afeyan & yatırımcılar", value: "$45B", desc: "mRNA aşı teknolojisinin öncüsü (CEO Stéphane Bancel)" },
+            { name: "Regeneron", founder: "Leonard Schleifer", value: "$100B", desc: "Biyoteknoloji devlerinden, COVID tedavisi geliştirdi" },
+            { name: "Mylan (Viatris)", founder: "Milan Puskar", value: "$12B", desc: "Küresel jenerik ilaç şirketi (CEO: Robert Coury)" },
+            { name: "Pfizer", founder: "Charles Pfizer", value: "$155B", desc: "Dünyanın en büyük ilaç şirketlerinden (kurucu Alman-Yahudi göçmen)" },
+            { name: "BioNTech", founder: "Uğur Şahin (Türk kökenli)", value: "$25B", desc: "COVID-19 aşısını Pfizer ile geliştiren Alman biyoteknoloji firması" }
+        ]
+    }
+];

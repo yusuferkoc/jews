@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('show-analysis-btn').addEventListener('click', () => { setActiveTab('show-analysis-btn'); closeSidebarOnMobile(); showAnalysisData(); });
 
     setupMobileToggle();
+    setupTimeSlider();
 });
 
 function setActiveTab(activeId) {
@@ -290,6 +291,15 @@ function drawInitialMarkers() {
 function selectEvent(eventId) {
     if (activeEventId === eventId) return; // Already active
 
+    // Update Slider UI if it doesn't match
+    const eventIndex = expulsionEvents.findIndex(e => e.id === eventId);
+    const slider = document.getElementById('time-slider');
+    const label = document.getElementById('slider-year-label');
+    if (slider && label && eventIndex !== -1) {
+        slider.value = eventIndex;
+        label.innerText = expulsionEvents[eventIndex].displayYear;
+    }
+
     const event = expulsionEvents.find(e => e.id === eventId);
     if (!event) return;
 
@@ -299,7 +309,6 @@ function selectEvent(eventId) {
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
 
     // Find sidebar item by event index
-    const eventIndex = expulsionEvents.findIndex(e => e.id === eventId);
     const itemEl = document.getElementById(`sidebar-item-${eventIndex}`);
     if (itemEl) {
         itemEl.classList.add('active');
@@ -441,6 +450,10 @@ function resetMap() {
     animationIntervals = [];
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
 
+    // Show slider ONLY on Exile map
+    const sliderContainer = document.getElementById('time-slider-container');
+    if (sliderContainer) sliderContainer.style.display = 'flex';
+
     const card = document.getElementById('initial-card');
     card.innerHTML = `
         <h2>Zaman Çizelgesini Keşfedin</h2>
@@ -459,6 +472,10 @@ function resetMap() {
 // Show 2026 Population Data
 function showPopulation2026() {
     hideAnalysisDashboard();
+    // Hide slider
+    const sliderContainer = document.getElementById('time-slider-container');
+    if (sliderContainer) sliderContainer.style.display = 'none';
+
     activeEventId = null;
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
     currentLayerGroup.clearLayers();
@@ -524,6 +541,9 @@ function showPopulation2026() {
 // Show Holy Places Data
 function showHolyPlaces() {
     hideAnalysisDashboard();
+    const sliderContainer = document.getElementById('time-slider-container');
+    if (sliderContainer) sliderContainer.style.display = 'none';
+
     activeEventId = null;
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
     currentLayerGroup.clearLayers();
@@ -614,6 +634,9 @@ function showHolyPlaces() {
 // Show Notable Figures Data
 function showNotableFigures() {
     hideAnalysisDashboard();
+    const sliderContainer = document.getElementById('time-slider-container');
+    if (sliderContainer) sliderContainer.style.display = 'none';
+
     activeEventId = null;
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
     currentLayerGroup.clearLayers();
@@ -704,6 +727,9 @@ function showNotableFigures() {
 // Show Turkey Data
 function showTurkeyData() {
     hideAnalysisDashboard();
+    const sliderContainer = document.getElementById('time-slider-container');
+    if (sliderContainer) sliderContainer.style.display = 'none';
+
     activeEventId = null;
     document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
     currentLayerGroup.clearLayers();
@@ -871,6 +897,13 @@ function showAnalysisData() {
                 <div class="stat-label">Analiz Edilen Bölge</div>
             </div>
         </div>
+
+        <div class="analysis-grid">
+            <!-- Sol Sütun: Ülkeler -->
+            <div class="analysis-column">
+                <div style="margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">
+                    <h2 style="font-size: 1.3rem;">🌍 Bölgesel Demografi & Servet Dağılımı</h2>
+                </div>
     `;
 
     analysisData.forEach(item => {
@@ -910,6 +943,50 @@ function showAnalysisData() {
         `;
     });
 
+    html += `
+            </div>
+            
+            <!-- Sağ Sütun: Şirketler -->
+            <div class="analysis-column">
+                <div style="margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px;">
+                    <h2 style="font-size: 1.3rem;">🏢 Öne Çıkan Şirketler & Holdingler</h2>
+                </div>
+    `;
+
+    if (typeof majorCompanies !== 'undefined') {
+        majorCompanies.forEach(sector => {
+            let companiesHtml = '';
+            sector.companies.forEach(c => {
+                companiesHtml += `
+                    <div style="display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <div class="company-value-badge" style="background: linear-gradient(135deg, ${sector.color}, ${sector.color}aa); color: #000;">
+                            ${c.value}
+                        </div>
+                        <div style="flex: 1; padding-top: 2px;">
+                            <div style="font-family: var(--font-serif); font-weight: 600; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 3px;">${c.name}</div>
+                            <div style="font-size: 0.7rem; font-weight: 600; color: ${sector.color}; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
+                                <span style="opacity: 0.7;">◆</span> ${c.founder}
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; font-weight: 300;">${c.desc}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div class="analysis-card" style="border-left: 3px solid ${sector.color};">
+                    <h3><span class="flag">${sector.icon}</span> ${sector.sector} <span style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 400;">(${sector.companies.length} şirket)</span></h3>
+                    ${companiesHtml}
+                </div>
+            `;
+        });
+    }
+
+    html += `
+            </div>
+        </div>
+    `;
+
     inner.innerHTML = html;
 
     // Animate bars
@@ -928,6 +1005,71 @@ function showAnalysisData() {
         <h2 style="color: #f39c12;">📊 Analiz Panosu</h2>
         <p>Ülkelere göre nüfus ve sermaye analizini inceliyorsunuz. Sektörlere tıklayarak öne çıkan isimlere ulaşabilirsiniz.</p>
     `;
+}
+
+// Set up Time Slider
+function setupTimeSlider() {
+    const sliderContainer = document.getElementById('time-slider-container');
+    const slider = document.getElementById('time-slider');
+    const label = document.getElementById('slider-year-label');
+    const playBtn = document.getElementById('slider-play-btn');
+
+    if (!slider || !label || !playBtn) return;
+
+    // Show slider initially because we start on 'exile'
+    sliderContainer.style.display = 'flex';
+
+    // Set max bounds
+    slider.max = expulsionEvents.length - 1;
+    slider.value = 0;
+    label.innerText = expulsionEvents[0].displayYear;
+
+    // On manually sliding
+    slider.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value);
+        label.innerText = expulsionEvents[val].displayYear;
+    });
+
+    // On releasing the slider
+    slider.addEventListener('change', (e) => {
+        const val = parseInt(e.target.value);
+        selectEvent(expulsionEvents[val].id);
+    });
+
+    // Auto Play Logic
+    let autoPlayInterval = null;
+    let isPlaying = false;
+
+    playBtn.addEventListener('click', () => {
+        if (isPlaying) {
+            clearInterval(autoPlayInterval);
+            isPlaying = false;
+            playBtn.innerText = '▶ Oynat';
+        } else {
+            isPlaying = true;
+            playBtn.innerText = '⏸ Durdur';
+            let currentVal = parseInt(slider.value);
+
+            // Loop functionality
+            if (currentVal >= expulsionEvents.length - 1) {
+                currentVal = -1; // reset to before start so next iteration is 0
+            }
+
+            autoPlayInterval = setInterval(() => {
+                currentVal++;
+                if (currentVal >= expulsionEvents.length) {
+                    clearInterval(autoPlayInterval);
+                    isPlaying = false;
+                    playBtn.innerText = '▶ Oynat';
+                    return;
+                }
+
+                slider.value = currentVal;
+                label.innerText = expulsionEvents[currentVal].displayYear;
+                selectEvent(expulsionEvents[currentVal].id);
+            }, 3000); // 3 seconds per event
+        }
+    });
 }
 
 // Map specific sectors to prominent notable figures and fly to them
