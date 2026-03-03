@@ -349,110 +349,103 @@ body.light-theme .analysis-card {
     font-size: 1.4rem;
 }
 
-/* Bar Chart Row */
-.bar-row {
+/* Stat Duo Layout */
+.stat-duo {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    align-items: stretch;
+    gap: 0;
     margin-bottom: 12px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.15);
 }
 
-.bar-label {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    width: 65px;
-    flex-shrink: 0;
-    text-align: right;
+body.light-theme .stat-duo {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+.stat-box {
+    flex: 1;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-box-label {
+    font-size: 0.62rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary);
     font-weight: 600;
 }
 
-.bar-track {
-    flex: 1;
-    height: 24px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    position: relative;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+.stat-box-value {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
 }
 
-body.light-theme .bar-track {
-    background: rgba(0, 0, 0, 0.05);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 0 rgba(255, 255, 255, 1);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+.pop-color {
+    color: #5bc0be;
 }
 
-.bar-fill {
-    height: 100%;
-    border-radius: 8px;
+.wealth-color {
+    color: #d4af37;
+}
+
+.stat-box-divider {
+    width: 1px;
+    background: rgba(255, 255, 255, 0.06);
     display: flex;
     align-items: center;
-    transition: width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    box-sizing: border-box;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0 6px;
 }
 
-.bar-text {
-    position: absolute;
-    left: 10px;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    font-size: 0.8rem;
+body.light-theme .stat-box-divider {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.stat-multiplier {
+    font-size: 0.65rem;
     font-weight: 800;
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.12);
+    padding: 2px 6px;
+    border-radius: 4px;
     white-space: nowrap;
-    z-index: 5;
-    pointer-events: none;
+    letter-spacing: 0.3px;
 }
 
-.pop-text {
-    color: #fff;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+/* Thin gauge bar */
+.stat-gauge {
+    display: flex;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.04);
+    margin-bottom: 12px;
+    gap: 2px;
 }
 
-.wealth-text {
-    color: #fff;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-}
-
-/* Add a subtle shine animation to the bars */
-.bar-fill::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 50%;
+.stat-gauge-pop {
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    animation: shine 3s infinite;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #1a5c5a, #5bc0be);
+    transition: width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-@keyframes shine {
-    0% {
-        left: -100%;
-    }
-
-    20% {
-        left: 200%;
-    }
-
-    100% {
-        left: 200%;
-    }
-}
-
-.bar-fill.pop {
-    background: linear-gradient(90deg, #2c3e50, #4ca1af);
-    box-shadow: 0 0 10px rgba(76, 161, 175, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-}
-
-.bar-fill.wealth {
-    background: linear-gradient(90deg, #ab8336, #d4af37, #f1c40f);
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+.stat-gauge-wealth {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #ab8336, #d4af37);
+    transition: width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    margin-left: auto;
 }
 
 .company-value-badge {
@@ -607,9 +600,12 @@ body.light-theme .analysis-subtab.active {
         grid-template-columns: repeat(3, 1fr);
     }
 
-    .bar-label {
-        width: 55px;
-        font-size: 0.65rem;
+    .stat-box {
+        padding: 8px 10px;
+    }
+
+    .stat-box-value {
+        font-size: 0.95rem;
     }
 }
 

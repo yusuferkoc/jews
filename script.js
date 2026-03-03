@@ -206,42 +206,43 @@ function buildSidebar(dataArray, viewType) {
                 map.flyTo(itemData.coords, 6, { duration: 1.5 });
                 setTimeout(() => { if (markers[index]) markers[index].openPopup(); }, 1500);
             });
-        } else if (viewType === 'holy') {
+        } else if (['holy', 'figures', 'turkey'].includes(viewType)) {
+            let color = '#1abc9c';
+            let zoomLevel = 8;
+            let yearText = itemData.era;
+            let summaryHTML = '';
+
+            if (viewType === 'holy') {
+                color = '#9b59b6';
+                yearText = itemData.highlight;
+            } else if (viewType === 'turkey') {
+                color = '#e74c3c';
+                zoomLevel = 10;
+                summaryHTML = `<p class="timeline-summary" style="margin-top:2px; font-size:0.75rem;">${itemData.highlight}</p>`;
+            } else if (viewType === 'figures') {
+                color = '#1abc9c'; // or another logic based on era if you want
+                summaryHTML = `<p class="timeline-summary" style="margin-top:2px; font-size:0.75rem;">${itemData.highlight}</p>`;
+            }
+
+            const imageWrap = itemData.wikiPage
+                ? `<div class="sb-img-wrap" data-wiki="${itemData.wikiPage}" style="width:45px; height:45px; border-radius:50%; background: rgba(255,255,255,0.05); margin-right: 15px; flex-shrink: 0; overflow:hidden; display:flex; align-items:center; justify-content:center; border: 1px solid rgba(255,255,255,0.1);"><span style="font-size:0.5rem; color:#666;">...</span></div>`
+                : `<div style="width:45px; height:45px; border-radius:50%; background: rgba(255,255,255,0.05); margin-right: 15px; flex-shrink: 0; display:flex; align-items:center; justify-content:center; border: 1px solid rgba(255,255,255,0.1);"><span style="font-size:1rem;">👤</span></div>`;
+
             item.innerHTML = `
-                <div class="timeline-year" style="color: #9b59b6;">${itemData.highlight}</div>
-                <h3 class="timeline-title">${itemData.name}</h3>
+                <div style="display: flex; align-items:center;">
+                    ${imageWrap}
+                    <div>
+                        <div class="timeline-year" style="color: ${color}; font-size: 0.8rem; margin-bottom:2px;">${yearText}</div>
+                        <h3 class="timeline-title" style="margin-bottom:0; font-size:1rem;">${itemData.name}</h3>
+                        ${summaryHTML}
+                    </div>
+                </div>
             `;
             item.addEventListener('click', () => {
                 closeSidebarOnMobile();
                 document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
                 item.classList.add('active');
-                map.flyTo(itemData.coords, 8, { duration: 1.5 });
-                setTimeout(() => { if (markers[index]) markers[index].openPopup(); }, 1500);
-            });
-        } else if (viewType === 'figures') {
-            item.innerHTML = `
-                <div class="timeline-year" style="color: #1abc9c;">${itemData.era}</div>
-                <h3 class="timeline-title">${itemData.name}</h3>
-                <p class="timeline-summary">${itemData.highlight}</p>
-            `;
-            item.addEventListener('click', () => {
-                closeSidebarOnMobile();
-                document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
-                item.classList.add('active');
-                map.flyTo(itemData.coords, 8, { duration: 1.5 });
-                setTimeout(() => { if (markers[index]) markers[index].openPopup(); }, 1500);
-            });
-        } else if (viewType === 'turkey') {
-            item.innerHTML = `
-                <div class="timeline-year" style="color: #e74c3c;">${itemData.era}</div>
-                <h3 class="timeline-title">${itemData.name}</h3>
-                <p class="timeline-summary">${itemData.highlight}</p>
-            `;
-            item.addEventListener('click', () => {
-                closeSidebarOnMobile();
-                document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
-                item.classList.add('active');
-                map.flyTo(itemData.coords, 10, { duration: 1.5 });
+                map.flyTo(itemData.coords, zoomLevel, { duration: 1.5 });
                 setTimeout(() => { if (markers[index]) markers[index].openPopup(); }, 1500);
             });
         } else if (viewType === 'analysis') {
@@ -261,6 +262,60 @@ function buildSidebar(dataArray, viewType) {
 
         timelineContainer.appendChild(item);
     });
+
+    // Lazy load Wikipedia images for sidebar items
+    if (['holy', 'figures', 'turkey'].includes(viewType)) {
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const wrap = entry.target;
+                    obs.unobserve(wrap);
+                    if (wrap.dataset.loaded) return;
+                    wrap.dataset.loaded = 'true';
+
+                    const wikiPage = wrap.getAttribute('data-wiki');
+                    if (!wikiPage) return;
+
+                    fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiPage)}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            const imgUrl = data.thumbnail && data.thumbnail.source;
+                            if (imgUrl) {
+                                wrap.innerHTML = `<img src="${imgUrl}" alt="${wikiPage}" style="width:100%;height:100%;object-fit:cover;">`;
+                            } else {
+                                // Fallback: try Turkish Wikipedia
+                                return fetch(`https://tr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiPage)}`)
+                                    .then(r2 => r2.json())
+                                    .then(data2 => {
+                                        const imgUrl2 = data2.thumbnail && data2.thumbnail.source;
+                                        if (imgUrl2) {
+                                            wrap.innerHTML = `<img src="${imgUrl2}" alt="${wikiPage}" style="width:100%;height:100%;object-fit:cover;">`;
+                                        } else {
+                                            wrap.innerHTML = `<span style="font-size:1rem;">👤</span>`;
+                                        }
+                                    });
+                            }
+                        })
+                        .catch(() => {
+                            // Last resort: try Turkish Wikipedia on network error too
+                            fetch(`https://tr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiPage)}`)
+                                .then(r2 => r2.json())
+                                .then(data2 => {
+                                    const imgUrl2 = data2.thumbnail && data2.thumbnail.source;
+                                    if (imgUrl2) {
+                                        wrap.innerHTML = `<img src="${imgUrl2}" alt="${wikiPage}" style="width:100%;height:100%;object-fit:cover;">`;
+                                    } else {
+                                        wrap.innerHTML = `<span style="font-size:1rem;">👤</span>`;
+                                    }
+                                })
+                                .catch(() => { wrap.innerHTML = `<span style="font-size:1rem;">👤</span>`; });
+                        });
+                }
+            });
+        }, { root: timelineContainer, rootMargin: '50px' });
+
+        timelineContainer.querySelectorAll('.sb-img-wrap').forEach(wrap => observer.observe(wrap));
+    }
 }
 
 // Draw initial markers (origins only)
@@ -980,9 +1035,14 @@ function showAnalysisData() {
     analysisData.forEach(item => {
         const popVal = parsePercent(item.populationRatio);
         const wealthVal = parsePercent(item.wealthRatio);
-        const popWidth = Math.max(3, Math.min(popVal * 1.3, 100));
-        const wealthWidth = Math.max(8, Math.min(wealthVal * 1.3, 100));
         const flag = flags[item.country] || '📍';
+
+        // Calculate a "multiplier" showing disproportionate wealth influence
+        let multiplier = '';
+        if (popVal > 0 && wealthVal > 0) {
+            const ratio = Math.round(wealthVal / popVal);
+            if (ratio > 1) multiplier = `<span class="stat-multiplier">${ratio}x</span>`;
+        }
 
         let sectorsHtml = '';
         if (item.sectors) {
@@ -996,19 +1056,22 @@ function showAnalysisData() {
         html += `
             <div class="analysis-card">
                 <h3><span class="flag">${flag}</span> ${item.country}</h3>
-                <div class="bar-row">
-                    <div class="bar-label">Nüfus</div>
-                    <div class="bar-track">
-                        <div class="bar-fill pop" style="width: 0%;" data-width="${popWidth}%"></div>
-                        <div class="bar-text pop-text">${item.populationRatio}</div>
+                <div class="stat-duo">
+                    <div class="stat-box pop-box">
+                        <div class="stat-box-label">Nüfus Oranı</div>
+                        <div class="stat-box-value pop-color">${item.populationRatio}</div>
+                    </div>
+                    <div class="stat-box-divider">
+                        ${multiplier}
+                    </div>
+                    <div class="stat-box wealth-box">
+                        <div class="stat-box-label">Sermaye Etkisi</div>
+                        <div class="stat-box-value wealth-color">${item.wealthRatio}</div>
                     </div>
                 </div>
-                <div class="bar-row">
-                    <div class="bar-label">Sermaye</div>
-                    <div class="bar-track">
-                        <div class="bar-fill wealth" style="width: 0%;" data-width="${wealthWidth}%"></div>
-                        <div class="bar-text wealth-text">${item.wealthRatio}</div>
-                    </div>
+                <div class="stat-gauge">
+                    <div class="stat-gauge-pop" style="width: 0%;" data-width="${Math.max(3, Math.min(popVal * 1.5, 50))}%"></div>
+                    <div class="stat-gauge-wealth" style="width: 0%;" data-width="${Math.max(8, Math.min(wealthVal * 0.7, 50))}%"></div>
                 </div>
                 ${sectorsHtml}
                 <p class="analysis-desc">${item.description}</p>
@@ -1033,17 +1096,22 @@ function showAnalysisData() {
         let figuresHtml = '';
         wealthyFigures.forEach((f, idx) => {
             const num = (idx + 1).toString();
+            // Build wiki page slug from name for photo lookup
+            const wikiSlug = f.name.replace(/\s&\s/g, '_and_').replace(/\s/g, '_');
             figuresHtml += `
-                <div style="display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <div class="company-value-badge" style="background: linear-gradient(135deg, #d4af37, #c5a059); color: #000; min-width: 70px;">
-                        ${f.netWorth}
+                <div style="display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div class="analysis-fig-img" data-wiki="${wikiSlug}" style="width:50px; height:50px; border-radius:50%; background:rgba(255,255,255,0.05); flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; border: 2px solid rgba(212,175,55,0.3);">
+                        <span style="font-size:0.55rem; color:#666;">...</span>
                     </div>
-                    <div style="flex: 1; padding-top: 2px;">
-                        <div style="font-family: var(--font-serif); font-weight: 600; font-size: 1.1rem; color: var(--accent); margin-bottom: 3px;">${num}. ${f.name}</div>
-                        <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-family: var(--font-serif); font-weight: 600; font-size: 1rem; color: var(--accent); margin-bottom: 2px;">${num}. ${f.name}</div>
+                        <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             ${f.title} <span style="opacity:0.5; margin:0 4px;">|</span> <span style="color:#d4af37;">${f.source}</span>
                         </div>
-                        <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; font-weight: 300;">${f.desc}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.4; font-weight: 300;">${f.desc}</div>
+                    </div>
+                    <div class="company-value-badge" style="background: linear-gradient(135deg, #d4af37, #c5a059); color: #000; min-width: 65px; font-size: 0.7rem;">
+                        ${f.netWorth}
                     </div>
                 </div>
             `;
@@ -1065,12 +1133,34 @@ function showAnalysisData() {
 
     inner.innerHTML = html;
 
-    // Animate bars
+    // Animate gauges
     setTimeout(() => {
-        inner.querySelectorAll('.bar-fill').forEach(bar => {
-            bar.style.width = bar.getAttribute('data-width');
+        inner.querySelectorAll('.stat-gauge-pop, .stat-gauge-wealth').forEach(el => {
+            el.style.width = el.getAttribute('data-width');
         });
     }, 100);
+
+    // Lazy load photos for wealthy figures
+    inner.querySelectorAll('.analysis-fig-img').forEach(wrap => {
+        const wikiPage = wrap.getAttribute('data-wiki');
+        if (!wikiPage) return;
+        fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiPage)}`)
+            .then(r => r.json())
+            .then(data => {
+                const imgUrl = data.thumbnail && data.thumbnail.source;
+                if (imgUrl) {
+                    wrap.innerHTML = `<img src="${imgUrl}" alt="${wikiPage}" style="width:100%;height:100%;object-fit:cover;">`;
+                } else {
+                    return fetch(`https://tr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(wikiPage)}`)
+                        .then(r2 => r2.json())
+                        .then(data2 => {
+                            const imgUrl2 = data2.thumbnail && data2.thumbnail.source;
+                            wrap.innerHTML = imgUrl2 ? `<img src="${imgUrl2}" alt="${wikiPage}" style="width:100%;height:100%;object-fit:cover;">` : `<span style="font-size:1.2rem;">👤</span>`;
+                        });
+                }
+            })
+            .catch(() => { wrap.innerHTML = `<span style="font-size:1.2rem;">👤</span>`; });
+    });
 
     // Update sidebar
     buildSidebar(analysisData, 'analysis');
