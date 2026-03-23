@@ -76,6 +76,10 @@
                         <span class="tab-icon">📊</span>
                         <span class="tab-label">Analiz</span>
                     </button>
+                    <button id="show-sabetay-btn" class="tab-btn" data-color="#8e44ad">
+                        <span class="tab-icon">🔗</span>
+                        <span class="tab-label">Sabetaylar</span>
+                    </button>
                 </div>
             </footer>
         </aside>
@@ -96,6 +100,34 @@
             <!-- Analysis Dashboard (Overlay) -->
             <div id="analysis-dashboard" class="analysis-dashboard" style="display:none;">
                 <div class="analysis-inner"></div>
+            </div>
+
+            <!-- Sabetay Dashboard (Overlay) -->
+            <div id="sabetay-dashboard" class="sabetay-dashboard" style="display:none;">
+                <div class="sabetay-inner">
+                    <div class="sabetay-header-bar">
+                        <div>
+                            <h2>Türkiye'deki Sabetaylar</h2>
+                            <p class="sabetay-subtitle">Ailelerin ve cemaatlerin birbiriyle kurduğu bağlar</p>
+                        </div>
+                        <button id="sabetay-back-btn" class="sabetay-back-btn">← Geri Dön</button>
+                    </div>
+                    <div class="sabetay-legend-bar" id="sabetay-legend"></div>
+                    <div class="sabetay-content">
+                        <canvas id="sabetay-canvas"></canvas>
+                        <div class="sabetay-detail-panel" id="sabetay-detail">
+                            <h3 id="sabetay-detail-title">Bir düğüme tıklayın</h3>
+                            <p id="sabetay-detail-desc">Sol taraftaki ağ grafiğinden bir aile veya kişi seçerek bağlantılarını görüntüleyebilirsiniz.</p>
+                            <div id="sabetay-detail-members"></div>
+                            <div id="sabetay-detail-connections"></div>
+                        </div>
+                    </div>
+                    <div class="sabetay-sources">
+                        <span>Kaynaklar:</span>
+                        <a href="https://ibraniyetvebeyazturkler.blogspot.com/" target="_blank">İbraniyet Akademisi</a>
+                        <a href="https://sabetayciavcisi.blogspot.com/" target="_blank">Akrabalık Zinciri</a>
+                    </div>
+                </div>
             </div>
 
             <div id="map"></div>

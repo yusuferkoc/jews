@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('show-figures-btn').addEventListener('click', () => { setActiveTab('show-figures-btn'); closeSidebarOnMobile(); showNotableFigures(); });
     document.getElementById('show-turkey-btn').addEventListener('click', () => { setActiveTab('show-turkey-btn'); closeSidebarOnMobile(); showTurkeyData(); });
     document.getElementById('show-analysis-btn').addEventListener('click', () => { setActiveTab('show-analysis-btn'); closeSidebarOnMobile(); showAnalysisData(); });
+    document.getElementById('show-sabetay-btn').addEventListener('click', () => { setActiveTab('show-sabetay-btn'); closeSidebarOnMobile(); showSabetayData(); });
 
     setupMobileToggle();
     setupTimeSlider();
@@ -500,6 +501,7 @@ function updateDetailCard(event) {
 
 function resetMap() {
     hideAnalysisDashboard();
+    hideSabetayDashboard();
     activeEventId = null;
     animationIntervals.forEach(clearInterval);
     animationIntervals = [];
@@ -527,6 +529,7 @@ function resetMap() {
 // Show 2026 Population Data
 function showPopulation2026() {
     hideAnalysisDashboard();
+    hideSabetayDashboard();
     // Hide slider
     const sliderContainer = document.getElementById('time-slider-container');
     if (sliderContainer) sliderContainer.style.display = 'none';
@@ -596,6 +599,7 @@ function showPopulation2026() {
 // Show Holy Places Data
 function showHolyPlaces() {
     hideAnalysisDashboard();
+    hideSabetayDashboard();
     const sliderContainer = document.getElementById('time-slider-container');
     if (sliderContainer) sliderContainer.style.display = 'none';
 
@@ -689,6 +693,7 @@ function showHolyPlaces() {
 // Show Notable Figures Data
 function showNotableFigures() {
     hideAnalysisDashboard();
+    hideSabetayDashboard();
     const sliderContainer = document.getElementById('time-slider-container');
     if (sliderContainer) sliderContainer.style.display = 'none';
 
@@ -853,6 +858,7 @@ window.filterNotableFigures = function (filterType) {
 // Show Turkey Data
 function showTurkeyData() {
     hideAnalysisDashboard();
+    hideSabetayDashboard();
     const sliderContainer = document.getElementById('time-slider-container');
     if (sliderContainer) sliderContainer.style.display = 'none';
 
@@ -974,7 +980,17 @@ function hideAnalysisDashboard() {
 }
 
 // Show Analysis Dashboard
+function hideSabetayDashboard() {
+    const dash = document.getElementById('sabetay-dashboard');
+    if (dash) dash.style.display = 'none';
+    if (window._sabetayAnimFrame) {
+        cancelAnimationFrame(window._sabetayAnimFrame);
+        window._sabetayAnimFrame = null;
+    }
+}
+
 function showAnalysisData() {
+    hideSabetayDashboard();
     activeEventId = null;
     currentLayerGroup.clearLayers();
     animationIntervals.forEach(clearInterval);
@@ -1290,3 +1306,473 @@ function focusOnFigure(sectorName) {
     }
 }
 
+// ==========================================
+// SABETAY - AĞ GRAFİĞİ (NETWORK GRAPH)
+// ==========================================
+function showSabetayData() {
+    hideAnalysisDashboard();
+    activeEventId = null;
+    currentLayerGroup.clearLayers();
+    animationIntervals.forEach(clearInterval);
+    animationIntervals = [];
+
+    const sliderContainer = document.getElementById('time-slider-container');
+    if (sliderContainer) sliderContainer.style.display = 'none';
+
+    const dash = document.getElementById('sabetay-dashboard');
+    dash.style.display = 'block';
+
+    // Category config
+    const categoryConfig = {
+        tarih:   { label: 'Tarihi Aileler', color: '#e74c3c', icon: '🏛️' },
+        siyaset: { label: 'Siyaset & Devlet', color: '#9b59b6', icon: '🏛️' },
+        is:      { label: 'İş Dünyası', color: '#d4af37', icon: '💼' },
+        medya:   { label: 'Medya & Sanat', color: '#3498db', icon: '🎨' },
+        akademi: { label: 'Akademi', color: '#2ecc71', icon: '📚' }
+    };
+
+    const connectionColors = {
+        evlilik: { color: '#e74c3c', label: 'Evlilik', dash: [] },
+        akrabalik: { color: '#9b59b6', label: 'Akrabalık', dash: [6, 4] },
+        is_ortakligi: { color: '#d4af37', label: 'İş Ortaklığı', dash: [3, 3] },
+        cemaat: { color: '#3498db', label: 'Cemaat', dash: [10, 4, 3, 4] }
+    };
+
+    // Build legend
+    const legendEl = document.getElementById('sabetay-legend');
+    let legendHtml = '';
+    Object.entries(categoryConfig).forEach(([key, cfg]) => {
+        legendHtml += `<div class="sabetay-legend-item active" data-category="${key}"><span class="sabetay-legend-dot" style="background:${cfg.color};"></span>${cfg.label}</div>`;
+    });
+    legendHtml += `<div class="sabetay-legend-item active" data-category="all" style="border-color:rgba(142,68,173,0.5); background:rgba(142,68,173,0.15);"><span class="sabetay-legend-dot" style="background:#8e44ad;"></span>Tümü</div>`;
+    // connection type legend
+    legendHtml += '<div class="sabetay-legend-line">';
+    Object.entries(connectionColors).forEach(([key, cfg]) => {
+        const dashStyle = cfg.dash.length === 0 ? 'solid' : 'dashed';
+        legendHtml += `<span style="display:inline-flex;align-items:center;gap:3px;margin-right:8px;"><span class="sabetay-legend-line-sample" style="border-top:2px ${dashStyle} ${cfg.color};background:none;"></span><span>${cfg.label}</span></span>`;
+    });
+    legendHtml += '</div>';
+    legendEl.innerHTML = legendHtml;
+
+    // Active categories
+    let activeCategories = new Set(Object.keys(categoryConfig));
+
+    // Legend click handlers
+    legendEl.querySelectorAll('.sabetay-legend-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const cat = item.dataset.category;
+            if (cat === 'all') {
+                activeCategories = new Set(Object.keys(categoryConfig));
+                legendEl.querySelectorAll('.sabetay-legend-item').forEach(i => i.classList.add('active'));
+            } else {
+                if (activeCategories.size === Object.keys(categoryConfig).length) {
+                    activeCategories = new Set([cat]);
+                    legendEl.querySelectorAll('.sabetay-legend-item').forEach(i => {
+                        i.classList.toggle('active', i.dataset.category === cat || i.dataset.category === 'all');
+                    });
+                } else if (activeCategories.has(cat)) {
+                    if (activeCategories.size > 1) {
+                        activeCategories.delete(cat);
+                        item.classList.remove('active');
+                    }
+                } else {
+                    activeCategories.add(cat);
+                    item.classList.add('active');
+                }
+                if (activeCategories.size === Object.keys(categoryConfig).length) {
+                    legendEl.querySelectorAll('.sabetay-legend-item[data-category="all"]').forEach(i => i.classList.add('active'));
+                } else {
+                    legendEl.querySelectorAll('.sabetay-legend-item[data-category="all"]').forEach(i => i.classList.remove('active'));
+                }
+            }
+        });
+    });
+
+    // Canvas setup
+    const canvas = document.getElementById('sabetay-canvas');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+
+    function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const detailPanel = document.getElementById('sabetay-detail');
+        const panelWidth = window.innerWidth > 900 ? (detailPanel ? detailPanel.offsetWidth : 320) : 0;
+        const w = rect.width - panelWidth;
+        const h = rect.height;
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { w, h };
+    }
+    let dims = resizeCanvas();
+    let cw = dims.w;
+    let ch = dims.h;
+
+    // Initialize node positions
+    const nodes = sabetayFamilies.map((f, i) => {
+        const angle = (i / sabetayFamilies.length) * Math.PI * 2;
+        const radius = Math.min(cw, ch) * 0.35;
+        return {
+            ...f,
+            x: cw / 2 + Math.cos(angle) * radius * (0.6 + Math.random() * 0.4),
+            y: ch / 2 + Math.sin(angle) * radius * (0.6 + Math.random() * 0.4),
+            vx: 0,
+            vy: 0,
+            radius: 20 + sabetayConnections.filter(c => c.source === f.id || c.target === f.id).length * 3
+        };
+    });
+
+    const nodeMap = {};
+    nodes.forEach(n => nodeMap[n.id] = n);
+
+    let selectedNode = null;
+    let hoveredNode = null;
+    let dragNode = null;
+
+    // Force-directed simulation
+    function simulate() {
+        const visibleIds = new Set(nodes.filter(n => activeCategories.has(n.category)).map(n => n.id));
+
+        nodes.forEach(n => {
+            if (dragNode === n || !visibleIds.has(n.id)) return;
+            let fx = 0, fy = 0;
+
+            // Center gravity
+            fx += (cw / 2 - n.x) * 0.003;
+            fy += (ch / 2 - n.y) * 0.003;
+
+            // Repulsion between all visible nodes
+            nodes.forEach(m => {
+                if (m === n || !visibleIds.has(m.id)) return;
+                const dx = n.x - m.x;
+                const dy = n.y - m.y;
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                const force = 2500 / (dist * dist);
+                fx += (dx / dist) * force;
+                fy += (dy / dist) * force;
+            });
+
+            // Attraction along edges
+            sabetayConnections.forEach(conn => {
+                let other = null;
+                if (conn.source === n.id && visibleIds.has(conn.target)) other = nodeMap[conn.target];
+                if (conn.target === n.id && visibleIds.has(conn.source)) other = nodeMap[conn.source];
+                if (!other) return;
+                const dx = other.x - n.x;
+                const dy = other.y - n.y;
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                const idealDist = 160;
+                const force = (dist - idealDist) * 0.008;
+                fx += (dx / dist) * force;
+                fy += (dy / dist) * force;
+            });
+
+            n.vx = (n.vx + fx) * 0.6;
+            n.vy = (n.vy + fy) * 0.6;
+            n.x += n.vx;
+            n.y += n.vy;
+
+            // Boundary constraints
+            const pad = 40;
+            n.x = Math.max(pad, Math.min(cw - pad, n.x));
+            n.y = Math.max(pad, Math.min(ch - pad, n.y));
+        });
+    }
+
+    // Draw
+    function draw() {
+        const isLight = document.body.classList.contains('light-theme');
+        ctx.clearRect(0, 0, cw, ch);
+
+        const visibleIds = new Set(nodes.filter(n => activeCategories.has(n.category)).map(n => n.id));
+
+        // Draw edges
+        sabetayConnections.forEach(conn => {
+            const src = nodeMap[conn.source];
+            const tgt = nodeMap[conn.target];
+            if (!src || !tgt || !visibleIds.has(src.id) || !visibleIds.has(tgt.id)) return;
+
+            const connCfg = connectionColors[conn.type] || connectionColors.akrabalik;
+            const isHighlighted = selectedNode && (conn.source === selectedNode.id || conn.target === selectedNode.id);
+
+            ctx.beginPath();
+            ctx.moveTo(src.x, src.y);
+            ctx.lineTo(tgt.x, tgt.y);
+            ctx.strokeStyle = isHighlighted ? connCfg.color : (isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.06)');
+            ctx.lineWidth = isHighlighted ? 2.5 : 1;
+            ctx.setLineDash(connCfg.dash);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        });
+
+        // Draw nodes
+        nodes.forEach(n => {
+            if (!visibleIds.has(n.id)) return;
+            const cfg = categoryConfig[n.category] || categoryConfig.tarih;
+            const isSelected = selectedNode && selectedNode.id === n.id;
+            const isConnected = selectedNode && sabetayConnections.some(c =>
+                (c.source === selectedNode.id && c.target === n.id) ||
+                (c.target === selectedNode.id && c.source === n.id)
+            );
+            const isHovered = hoveredNode && hoveredNode.id === n.id;
+            const dimmed = selectedNode && !isSelected && !isConnected;
+
+            const r = n.radius;
+
+            // Glow for selected/hovered
+            if (isSelected || isHovered) {
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, r + 8, 0, Math.PI * 2);
+                ctx.fillStyle = cfg.color + '25';
+                ctx.fill();
+            }
+
+            // Node circle
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+            ctx.fillStyle = dimmed
+                ? (isLight ? 'rgba(200,200,200,0.3)' : 'rgba(40,40,40,0.4)')
+                : (isLight ? cfg.color + '20' : cfg.color + '30');
+            ctx.fill();
+            ctx.strokeStyle = dimmed
+                ? (isLight ? 'rgba(180,180,180,0.3)' : 'rgba(60,60,60,0.3)')
+                : (isSelected ? cfg.color : cfg.color + '80');
+            ctx.lineWidth = isSelected ? 3 : 1.5;
+            ctx.stroke();
+
+            // Label
+            const fontSize = Math.max(9, Math.min(12, r * 0.55));
+            ctx.font = `600 ${fontSize}px Inter, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = dimmed
+                ? (isLight ? 'rgba(150,150,150,0.5)' : 'rgba(100,100,100,0.5)')
+                : (isLight ? '#222' : '#f0f2f5');
+
+            // Word wrap in circle
+            const words = n.name.split(/\s+/);
+            if (words.length <= 2) {
+                if (words.length === 1) {
+                    ctx.fillText(words[0], n.x, n.y);
+                } else {
+                    ctx.fillText(words[0], n.x, n.y - fontSize * 0.5);
+                    ctx.fillText(words[1], n.x, n.y + fontSize * 0.5);
+                }
+            } else {
+                const line1 = words.slice(0, Math.ceil(words.length / 2)).join(' ');
+                const line2 = words.slice(Math.ceil(words.length / 2)).join(' ');
+                ctx.fillText(line1, n.x, n.y - fontSize * 0.5);
+                ctx.fillText(line2, n.x, n.y + fontSize * 0.5);
+            }
+        });
+    }
+
+    // Animation loop
+    function animate() {
+        simulate();
+        draw();
+        window._sabetayAnimFrame = requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Mouse interaction
+    function getNodeAt(mx, my) {
+        const visibleIds = new Set(nodes.filter(n => activeCategories.has(n.category)).map(n => n.id));
+        for (let i = nodes.length - 1; i >= 0; i--) {
+            const n = nodes[i];
+            if (!visibleIds.has(n.id)) continue;
+            const dx = mx - n.x;
+            const dy = my - n.y;
+            if (dx * dx + dy * dy <= n.radius * n.radius) return n;
+        }
+        return null;
+    }
+
+    function getMousePos(e) {
+        const rect = canvas.getBoundingClientRect();
+        return { x: (e.clientX - rect.left), y: (e.clientY - rect.top) };
+    }
+
+    canvas.addEventListener('mousemove', e => {
+        const pos = getMousePos(e);
+        if (dragNode) {
+            dragNode.x = pos.x;
+            dragNode.y = pos.y;
+            dragNode.vx = 0;
+            dragNode.vy = 0;
+            return;
+        }
+        const node = getNodeAt(pos.x, pos.y);
+        hoveredNode = node;
+        canvas.style.cursor = node ? 'pointer' : 'grab';
+    });
+
+    canvas.addEventListener('mousedown', e => {
+        const pos = getMousePos(e);
+        const node = getNodeAt(pos.x, pos.y);
+        if (node) {
+            dragNode = node;
+            canvas.style.cursor = 'grabbing';
+        }
+    });
+
+    canvas.addEventListener('mouseup', e => {
+        if (dragNode) {
+            const pos = getMousePos(e);
+            const node = getNodeAt(pos.x, pos.y);
+            if (node && node === dragNode) {
+                selectSabetayNode(node);
+            }
+            dragNode = null;
+            canvas.style.cursor = 'grab';
+        }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        hoveredNode = null;
+        dragNode = null;
+    });
+
+    // Touch support
+    canvas.addEventListener('touchstart', e => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const pos = getMousePos(touch);
+        const node = getNodeAt(pos.x, pos.y);
+        if (node) dragNode = node;
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        if (dragNode) {
+            const touch = e.touches[0];
+            const pos = getMousePos(touch);
+            dragNode.x = pos.x;
+            dragNode.y = pos.y;
+            dragNode.vx = 0;
+            dragNode.vy = 0;
+        }
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', e => {
+        if (dragNode) {
+            selectSabetayNode(dragNode);
+            dragNode = null;
+        }
+    });
+
+    // Select node and update detail panel
+    function selectSabetayNode(node) {
+        selectedNode = (selectedNode && selectedNode.id === node.id) ? null : node;
+        updateDetailPanel();
+    }
+
+    function updateDetailPanel() {
+        const titleEl = document.getElementById('sabetay-detail-title');
+        const descEl = document.getElementById('sabetay-detail-desc');
+        const membersEl = document.getElementById('sabetay-detail-members');
+        const connectionsEl = document.getElementById('sabetay-detail-connections');
+
+        if (!selectedNode) {
+            titleEl.textContent = 'Bir düğüme tıklayın';
+            descEl.textContent = 'Sol taraftaki ağ grafiğinden bir aile veya kişi seçerek bağlantılarını görüntüleyebilirsiniz.';
+            membersEl.innerHTML = '';
+            connectionsEl.innerHTML = '';
+            return;
+        }
+
+        const cfg = categoryConfig[selectedNode.category] || categoryConfig.tarih;
+        titleEl.innerHTML = `<span style="color:${cfg.color};">${cfg.icon}</span> ${selectedNode.name}`;
+        descEl.textContent = selectedNode.description;
+
+        // Members
+        if (selectedNode.members && selectedNode.members.length > 0) {
+            let mhtml = '<div class="sabetay-detail-section-title">Bilinen Üyeler</div>';
+            selectedNode.members.forEach(m => {
+                mhtml += `<span class="sabetay-member-tag">${m}</span>`;
+            });
+            membersEl.innerHTML = mhtml;
+        } else {
+            membersEl.innerHTML = '';
+        }
+
+        // Connections
+        const relatedConns = sabetayConnections.filter(c => c.source === selectedNode.id || c.target === selectedNode.id);
+        if (relatedConns.length > 0) {
+            let chtml = '<div class="sabetay-detail-section-title">Bağlantılar</div>';
+            relatedConns.forEach(conn => {
+                const otherId = conn.source === selectedNode.id ? conn.target : conn.source;
+                const other = nodeMap[otherId];
+                if (!other) return;
+                const connCfg = connectionColors[conn.type] || connectionColors.akrabalik;
+                const typeLabels = { evlilik: 'Evlilik', akrabalik: 'Akrabalık', is_ortakligi: 'İş Ort.', cemaat: 'Cemaat' };
+                chtml += `
+                    <div class="sabetay-connection-item">
+                        <span class="sabetay-connection-type" style="background:${connCfg.color}20;color:${connCfg.color};border:1px solid ${connCfg.color}40;">${typeLabels[conn.type] || conn.type}</span>
+                        <span class="sabetay-connection-name">${other.name}</span>
+                        <div class="sabetay-connection-desc">${conn.description}</div>
+                    </div>
+                `;
+            });
+            connectionsEl.innerHTML = chtml;
+        } else {
+            connectionsEl.innerHTML = '<div class="sabetay-detail-section-title">Bağlantı bulunamadı</div>';
+        }
+    }
+
+    // Back button
+    document.getElementById('sabetay-back-btn').addEventListener('click', () => {
+        resetMap();
+    });
+
+    // Resize handler
+    window.addEventListener('resize', () => {
+        const newDims = resizeCanvas();
+        cw = newDims.w;
+        ch = newDims.h;
+    });
+
+    // Build sidebar with family list
+    const timelineContainer = document.getElementById('timeline');
+    timelineContainer.innerHTML = '';
+    sabetayFamilies.forEach((family, index) => {
+        const item = document.createElement('div');
+        item.className = 'timeline-item';
+        item.id = `sidebar-item-${index}`;
+        const cfg = categoryConfig[family.category] || categoryConfig.tarih;
+        item.innerHTML = `
+            <div style="display: flex; align-items:center;">
+                <div style="width:40px; height:40px; border-radius:50%; background: ${cfg.color}20; border: 2px solid ${cfg.color}50; margin-right: 12px; flex-shrink: 0; display:flex; align-items:center; justify-content:center;">
+                    <span style="font-size:1rem;">${cfg.icon}</span>
+                </div>
+                <div>
+                    <div class="timeline-year" style="color: ${cfg.color}; font-size: 0.75rem; margin-bottom:2px;">${cfg.label}</div>
+                    <h3 class="timeline-title" style="margin-bottom:0; font-size:0.95rem;">${family.name}</h3>
+                    <p class="timeline-summary" style="margin-top:2px; font-size:0.7rem;">${family.description.substring(0, 80)}...</p>
+                </div>
+            </div>
+        `;
+        item.addEventListener('click', () => {
+            closeSidebarOnMobile();
+            document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
+            item.classList.add('active');
+            const node = nodes[index];
+            selectedNode = node;
+            updateDetailPanel();
+        });
+        timelineContainer.appendChild(item);
+    });
+
+    // Update detail card
+    const card = document.getElementById('initial-card');
+    card.innerHTML = `
+        <h2 style="color: #8e44ad;">Sabetay Aile Ağları</h2>
+        <p>Türkiye'deki Sabetayist ailelerin ve cemaatlerin birbirleriyle kurduğu akrabalık, evlilik, cemaat ve iş bağlantılarını keşfedin.</p>
+        <div class="detail-tags">
+            <span class="tag">${sabetayFamilies.length} Aile / Kişi</span>
+            <span class="tag">${sabetayConnections.length} Bağlantı</span>
+        </div>
+    `;
+}

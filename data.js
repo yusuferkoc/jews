@@ -658,3 +658,492 @@ const wealthyFigures = [
     { name: "Jeff Yass", title: "Susquehanna Int. Group", netWorth: "$12B+", source: "Kantitatif Finans / TikTok", desc: "ABD'nin en büyük opsiyon tüccarlarından ve TikTok'un arkasındaki ByteDance'ın en büyük Amerikalı yatırımcısı." },
     { name: "Sam Altman", title: "OpenAI CEO", netWorth: "$1B+", source: "OpenAI (Yapay Zeka)", desc: "ChatGPT'nin yaratıcısı OpenAI'ın CEO'su, küresel yapay zeka devriminin en etkili ismi." }
 ];
+
+// ==========================================
+// SABETAYLAR - AİLE BAĞLANTILARI VERİLERİ
+// ==========================================
+
+const sabetayFamilies = [
+    // === TARİHİ AİLELER & CEMAATLER ===
+    { id: "evliyazadeler", name: "Evliyazadeler", category: "tarih", description: "Osmanlı döneminin en güçlü Sabetayist ailelerinden biri. Selanik kökenli olup bürokrasi ve ticarette çok etkindi. Evliyazade Naciye, İsmet İnönü ile evlenerek aileyi Cumhuriyet'in kurucu kadrosuna bağlamıştır. Latife Hanım'ın ailesi Uşşakizadeler ile de akrabalık bağları bulunur. Aynizadeler, Ertegün ailesi ve Dinçkök ailesiyle de geniş bir ilişki ağına sahiptir.", members: ["Evliyazade Mehmet Efendi", "Evliyazade Naciye", "Adnan Menderes (damat)"] },
+    { id: "inegolluzadeler", name: "İnegöllüzadeler", category: "tarih", description: "Osmanlı ve erken Cumhuriyet döneminin köklü Sabetayist ailesi. Devlet bürokrasisi, sanat ve iş dünyasında geniş akrabalık ağına sahip.", members: ["Ahmet Tevfik Paşa (Son Sadrazam)", "Selahattin Beyazıt"] },
+    { id: "manyasizadeler", name: "Manyasizadeler", category: "tarih", description: "Kapancı cemaatine mensup köklü aile. Osmanlı bürokrasisinde ve sonraki dönemde edebiyat ve sanatta etkili isimler yetiştirdi.", members: ["Manyasizade Refik Bey", "Ahmet Zühtü Paşa"] },
+    { id: "kapanci", name: "Kapancı Cemaati", category: "tarih", description: "Sabetay Sevi'nin ölümünden sonra oluşan üç büyük dönme cemaatten biri. Jacob Querido'nun takipçileri olarak da bilinir. Selanik'te 'Kapancı' (tüccar) lakabıyla anılmışlar, İstanbul'a göçle birlikte iş dünyası, bürokrasi ve sanatta geniş bir akrabalık ağı kurmuşlardır. Mardinizadeler, Edin, Bezmen, Menemencioğlu, Çapanzadeler, Bayındırlızadeler gibi aileler bu cemaate mensuptur. Nevzat Tandoğan, Kadir Has, Erol Simavi, Suat Hayri Ürgüplü, Halil Rıfat Paşa gibi isimlerle bağlantılıdır.", members: ["Kapancıbaşı ailesi"] },
+    { id: "yakubi", name: "Yakubi Cemaati", category: "tarih", description: "Sabetay Sevi'nin kayınpederi Yosef Filozof'un takipçilerinden oluşan en muhafazakâr dönme cemaati. 'Yakubi' adı Yakup'tan gelir. Selanik'te kendi okulları, sinagogları ve mezarlıkları vardı. Muallim Şemsi Efendi bu cemaatin eğitim öncüsüdür ve Atatürk'ün ilk öğretmeni olarak bilinir. Nuri Conker, Salih Bozok gibi Atatürk'ün Selanikli çevresi bu cemaatle ilişkilendirilir. Evliyazadeler ve Voskay ailesi de Yakubi cemaatiyle bağlantılıdır.", members: ["Yakubi ailesi"] },
+    { id: "mardinizadeler", name: "Mardinizadeler", category: "tarih", description: "Kapancı cemaatine mensup tarihi aile. İzzet Mehmet Paşa ile olan bağlantıları bilinen önemli bir Osmanlı ailesidir.", members: ["Mardinizade ailesi üyeleri"] },
+    { id: "katipzadeler", name: "Katipzadeler", category: "tarih", description: "Sabetayist cemaatlerle akrabalık bağları bulunan Osmanlı dönemi ailesi.", members: ["Katipzade ailesi üyeleri"] },
+    { id: "keçecizadeler", name: "Keçecizadeler", category: "tarih", description: "Osmanlı bürokrasisinde ve edebiyatında iz bırakan tarihi aile. Sabetayist cemaat bağlantıları araştırmacılar tarafından incelenmektedir.", members: ["Keçecizade ailesi üyeleri"] },
+    { id: "gorbon", name: "Gorbon Ailesi", category: "tarih", description: "Sabetayist cemaat bağlantıları olan tarihi aile. Siyaset ve iş dünyasıyla da akrabalık bağları bulunmaktadır.", members: ["Gorbon ailesi üyeleri"] },
+
+    // === SİYASET & DEVLET ===
+    { id: "inonu", name: "İnönü Ailesi", category: "siyaset", description: "Türkiye Cumhuriyeti'nin ikinci cumhurbaşkanı İsmet İnönü'nün ailesi. Evliyazadeler ile evlilik yoluyla bağlantılı.", members: ["İsmet İnönü", "Mevhibe İnönü (Evliyazade)", "Erdal İnönü"] },
+    { id: "kazim_dirik", name: "Kazım Dirik", category: "siyaset", description: "General ve İzmir Valisi. Tayfun Er'in 'Erguvaniler' kitabında Sabetayist bağlantıları ele alınmıştır.", members: ["Kazım Dirik"] },
+    { id: "hasan_polatkan", name: "Hasan Polatkan", category: "siyaset", description: "Demokrat Parti dönemi Maliye Bakanı. Germirli ailesiyle olan bağlantıları araştırılmıştır.", members: ["Hasan Polatkan"] },
+    { id: "nevzat_tandogan", name: "Nevzat Tandoğan", category: "siyaset", description: "Uzun yıllar Ankara Valiliği yapmış güçlü bürokrat. Kapancı cemaati ve Edin ailesiyle bağlantılı.", members: ["Nevzat Tandoğan"] },
+    { id: "kazim_ozalp", name: "Kazım Özalp", category: "siyaset", description: "Milli Mücadele komutanlarından, TBMM başkanlığı yapmış siyasetçi.", members: ["Kazım Özalp"] },
+    { id: "mesut_yilmaz", name: "Mesut Yılmaz", category: "siyaset", description: "ANAP Genel Başkanı ve Başbakan. Keçecizadeler ve Gorbon ailesiyle olan ilişkileri araştırılmıştır.", members: ["Mesut Yılmaz"] },
+    { id: "mithat_pasa", name: "Mithat Paşa", category: "siyaset", description: "Osmanlı reformcusu ve Kanun-i Esasi'nin mimarı. Mardinizadeler ve İnegöllüzadeler ile akrabalık bağı iddia edilmektedir.", members: ["Mithat Paşa"] },
+
+    // === İŞ DÜNYASI ===
+    { id: "boyner", name: "Boyner Ailesi", category: "is", description: "Türkiye'nin önde gelen perakende ve tekstil holdinglerinden Boyner Grup'un sahibi aile. İnegöllüzadeler ile bağlantılı.", members: ["Osman Boyner", "Cem Boyner", "Hasan Çolakoğlu"] },
+    { id: "eczacibasi", name: "Eczacıbaşı Ailesi", category: "is", description: "İlaç, yapı malzemeleri ve teknoloji alanında faaliyet gösteren dev holdingin sahibi aile. İnegöllüzadeler ile bağlantılı.", members: ["Nejat Eczacıbaşı", "Bülent Eczacıbaşı"] },
+    { id: "koc", name: "Koç Ailesi", category: "is", description: "Türkiye'nin en büyük sanayi kuruluşu Koç Holding'in kurucusu ailenin, Kadirbeyoğlu-Ataç ailesi üzerinden bağlantıları incelenmektedir.", members: ["Vehbi Koç", "Rahmi Koç", "Mustafa Koç"] },
+    { id: "dedeman", name: "Dedeman Ailesi", category: "is", description: "Otelcilik ve turizm sektöründe büyük yatırımları bulunan aile. Edin ailesi ile bağlantılı.", members: ["Dedeman ailesi üyeleri"] },
+    { id: "karamehmet", name: "Karamehmet Ailesi", category: "is", description: "Telekomünikasyon ve medya sektöründe büyük yatırımları olan aile. Eliyeşil ailesiyle akrabalık bağı bulunmaktadır.", members: ["Mehmet Emin Karamehmet"] },
+    { id: "dinçkok", name: "Dinçkök Ailesi", category: "is", description: "Akkök Holding'in sahibi sanayi ailesi. Raif Dinçkök, birçok başka aileyle evlilik ve akrabalık bağları kurmuştur.", members: ["Raif Dinçkök", "Nilüfer Dinçkök"] },
+    { id: "kadir_has", name: "Kadir Has", category: "is", description: "Has Holding kurucusu ve hayırsever iş insanı. Kapancı cemaati, Edin ailesi ve Nemlizadeler ile bağlantılı.", members: ["Kadir Has"] },
+    { id: "eliyesil", name: "Eliyeşil Ailesi", category: "is", description: "İstanbul'un köklü iş ailelerinden. Karamehmet, Bezmen ve Pısak aileleriyle geniş bir akrabalık ağına sahip.", members: ["Eliyeşil ailesi üyeleri"] },
+    { id: "bezmen", name: "Bezmen Ailesi", category: "is", description: "Türkiye'nin tanınmış sanayi ailelerinden. Eliyeşil ve Karamehmet aileleriyle akrabalık bağları bulunmaktadır.", members: ["Bezmen ailesi üyeleri"] },
+    { id: "edin", name: "Edin Ailesi", category: "is", description: "Kapancı cemaatine mensup iş ailesi. Birçok önde gelen poliik ve iş figürüyle bağlantılı.", members: ["Edin ailesi üyeleri"] },
+
+    // === MEDYA & SANAT ===
+    { id: "aydin_dogan", name: "Aydın Doğan", category: "medya", description: "Doğan Holding kurucusu ve Türkiye'nin en büyük medya grubunun eski sahibi. Neşet Bora ve Eşfak Aykaç ile bağlantılı.", members: ["Aydın Doğan"] },
+    { id: "erol_simavi", name: "Erol Simavi", category: "medya", description: "Hürriyet gazetesinin eski sahibi. Kapancı cemaati ile bağlantılı olduğu iddia edilmektedir.", members: ["Erol Simavi"] },
+    { id: "nuri_colakoglu", name: "Nuri Çolakoğlu", category: "medya", description: "Show TV kurucusu ve medya patronu. Dedeman ve Edin aileleriyle bağlantılı.", members: ["Nuri Çolakoğlu"] },
+    { id: "abidin_dino", name: "Abidin Dino (Dinozadeler)", category: "medya", description: "Ünlü ressam ve sanatçı. Ailesi 'Dinozadeler' olarak bilinir. Büyükbabası Abidin Paşa, Osmanlı valisi ve devlet adamıdır. Babası Rasih Bey'in kızkardeşi Nefise hanım, Celal Nuri İleri ve Suphi Nuri İleri'nin annesidir. Ali Fuat Cebesoy'un teyzesi Leyla hanım, Nazım Hikmet ve Oktay Rıfat'ın anneannesidir - bu da Dinozadeler'i geniş bir entelektüel ağa bağlar. Ercüment Ekrem Talu (Defne Samyeli'nin büyükbabası), Osman Kavala, Mehmet Ali Aybar ve Hüsamettin Cindoruk da Dinozadeler ile akrabadır.", members: ["Abidin Dino", "Celal Nuri İleri", "Rasih Nuri İleri"] },
+    { id: "nazim_hikmet", name: "Nazım Hikmet", category: "medya", description: "Türk şiirinin en büyük isimlerinden. Dinozadeler yazısına göre anneannesi Leyla hanım, Ali Fuat Cebesoy'un teyzesidir. Bu bağlantı onu şair Oktay Rıfat ile de akraba yapar (ikisi de aynı soydan gelmektedir). Mehmet Ali Aybar'ın babaannesi de aynı aileden Hayriye hanımdır. Halide Edip Adıvar ve Abidin Dino ile de akrabalık bağları bulunmaktadır.", members: ["Nazım Hikmet", "Samiye Bilgişin"] },
+    { id: "ferzan_ozpetek", name: "Ferzan Özpetek", category: "medya", description: "Uluslararası ün kazanmış yönetmen. Zeynep Aksu, Fethi Ahmet Paşa ve Tarık Zafer Tunaya ile bağlantıları araştırılmıştır.", members: ["Ferzan Özpetek", "Zeynep Aksu"] },
+    { id: "halide_edip", name: "Halide Edip Adıvar", category: "medya", description: "Cumhuriyet döneminin önemli yazarı ve aktivisti. Sabetayist kökenli bağlantıları araştırılmıştır.", members: ["Halide Edip Adıvar"] },
+    { id: "osman_hamdi", name: "Osman Hamdi Bey", category: "medya", description: "Ünlü ressam ve arkeolog, İstanbul Arkeoloji Müzesi'nin kurucusu. Hüsrev Gerede ve Selim Sarper ile akrabalık bağları bulunmaktadır.", members: ["Osman Hamdi Bey"] },
+    { id: "vedat_milor", name: "Vedat Milor", category: "medya", description: "Tanınmış gastronomi yazarı ve televizyon sunucusu. Edin ailesi ve Mete Akyol ile bağlantılı.", members: ["Vedat Milor"] },
+    { id: "defne_samyeli", name: "Defne Samyeli", category: "medya", description: "Ünlü TV sunucusu. Büyükbabası yazar Ercüment Ekrem Talu, Recaizade Mahmut Ekrem'in oğludur ve Dinozadeler ailesinden Feriha hanım ile evlenmiştir. Bu evlilik Defne Samyeli'yi Abidin Dino, Nazım Hikmet, Mehmet Ali Aybar gibi isimlerle akraba yapmaktadır. Gorbon ailesi ve Keçecizadeler ile de bağlantıları araştırılmıştır.", members: ["Defne Samyeli"] },
+
+    // === AKADEMİ & DÜŞÜNCE ===
+    { id: "celal_sengor", name: "Celal Şengör", category: "akademi", description: "Türkiye'nin en tanınmış jeologu ve bilim insanı. Tüli Kamhi ve Menteşe ailesi ile akrabalık bağları tespit edilmiştir.", members: ["Celal Şengör"] },
+    { id: "bahriye_ucok", name: "Bahriye Üçok", category: "akademi", description: "İlahiyat profesörü ve suikasta kurban giden akademisyen. Sadri Maksudi Arsal ve Dinçkök ailesiyle bağlantılı.", members: ["Bahriye Üçok"] },
+    { id: "husrev_gerede", name: "Hüsrev Gerede", category: "akademi", description: "Diplomat ve siyasetçi. Şakir Paşa ailesi, Vafi ailesi ve Osman Hamdi Bey ile geniş akrabalık ağı.", members: ["Hüsrev Gerede", "Adnan Berkay"] },
+    { id: "tuli_kamhi", name: "Tüli Kamhi", category: "akademi", description: "Sabetayist araştırmalarda sık adı geçen figür. Celal Şengör, Uşaklıgil ailesi, Menteşe ailesi ile bağlantılı.", members: ["Tüli Kamhi"] },
+    { id: "sakir_pasa", name: "Şakir Paşa Ailesi", category: "akademi", description: "Osmanlı dönemi paşa ailesi. Hüsrev Gerede, Münir Özkul ve Adalet Ağaoğlu ile bağlantılar bulunmaktadır.", members: ["Şakir Paşa", "Münir Özkul (damat)"] },
+    { id: "muhtar_kent", name: "Muhtar Kent", category: "is", description: "Coca-Cola'nın eski CEO'su, Türk iş dünyasının küresel yüzlerinden. Kazım İnanç ve Manyasizadeler ile bağlantılı.", members: ["Muhtar Kent"] },
+
+    // === EK TARİHİ AİLELER & CEMAATLER ===
+    { id: "karakas", name: "Karakaş Cemaati", category: "tarih", description: "Sabetay Sevi'nin ardılı Baruchya Ruso'nun takipçilerinden oluşan üçüncü büyük dönme cemaati. 'Karakaş' lakabı, Baruchya Ruso'nun kaşlarının siyahlığından gelir. Diğer iki cemaatten (Yakubi ve Kapancı) daha radikal kabul edilirler. Marc David Baer'in araştırmalarında Galip Pasiner'in bu cemaate mensup olduğu belirtilmiştir. Sadrazam İbrahim Ethem Paşa, Kadızadeler, Çürüksulular ve Leyla Gencer bu cemaatle ilişkilendirilir. Zekeriya Sertel ve Suat Hayri Ürgüplü ile de bağlantıları vardır.", members: ["Karakaşzade Rüştü Bey"] },
+    { id: "capanzadeler", name: "Çapanzadeler", category: "tarih", description: "Osmanlı İmparatorluğu'nda ilk özel gazete Tercüman-ı Ahval'i kuran Çapanzade Agah Efendi'nin ailesi.", members: ["Çapanzade Agah Efendi"] },
+    { id: "menemencioglu", name: "Menemencioğlu Ailesi", category: "tarih", description: "Osmanlı bürokrasisinde önemli rol oynayan köklü aile. Koç ailesi ve Narmanlı ailesiyle bağlantılı.", members: ["Ethem Menemencioğlu", "Nermin Menemencioğlu"] },
+    { id: "narmanli", name: "Narmanlı Ailesi", category: "tarih", description: "İstanbul'un tarihi Narmanlı Han'ın sahibi aile. Koç ailesi, Edin ailesi ve Menemencioğlu ailesiyle bağlantılı.", members: ["Narmanlı ailesi üyeleri"] },
+    { id: "vafi", name: "Vafi Ailesi", category: "tarih", description: "Hüsrev Gerede, Ali Haydar Arsebük ve Hacı Ahmed Vesim Paşa ile geniş akrabalık ağı bulunan tarihi aile.", members: ["Cemil Vafi", "Vafi ailesi üyeleri"] },
+    { id: "feyzioğlu", name: "Feyzioğlu Ailesi", category: "tarih", description: "İnegöllüzadeler ve Silahçı Hasan Tahsin ile bağlantıları bulunan aile.", members: ["Feyzioğlu ailesi üyeleri"] },
+    { id: "nemlizadeler", name: "Nemlizadeler", category: "tarih", description: "Kadir Has ve Can Kıraç ile bağlantıları olan tarihi aile.", members: ["Nemlizade ailesi üyeleri"] },
+    { id: "koprululer", name: "Köprülü Ailesi", category: "tarih", description: "Osmanlı Sadrazamları çıkaran köklü aile. Talat Muşkara ile bağlantıları araştırılmıştır.", members: ["Köprülü ailesi üyeleri"] },
+    { id: "aynizadeler", name: "Aynizadeler", category: "tarih", description: "Seyfullah Esin ve Münevver Ayaşlı ile bağlantıları bulunan tarihi Sabetayist aile.", members: ["Aynizade ailesi üyeleri"] },
+
+    // === EK SİYASET & DEVLET ===
+    { id: "ecevit", name: "Ecevit Ailesi", category: "siyaset", description: "Başbakan Bülent Ecevit ve eşi Rahşan Ecevit. Aydın Boysan, Ali Sami Yen, Hasan Rıza Soyak ile bağlantıları araştırılmıştır.", members: ["Bülent Ecevit", "Rahşan Ecevit"] },
+    { id: "ismail_cem", name: "İsmail Cem", category: "siyaset", description: "Dışişleri Bakanı ve gazeteci. İpekçi ailesiyle akrabalık bağları bulunmaktadır.", members: ["İsmail Cem İpekçi"] },
+    { id: "kemal_dervis", name: "Kemal Derviş", category: "siyaset", description: "Ekonomiden sorumlu Devlet Bakanı ve UNDP Başkanı. Sabetayist kökenli bağlantıları araştırılmıştır.", members: ["Kemal Derviş"] },
+    { id: "suat_urguplu", name: "Suat Hayri Ürgüplü", category: "siyaset", description: "Başbakanlık yapmış siyasetçi. Kapancı Cemaati, Bezmenler, Celal Şengör ve Zekeriya Sertel ile bağlantılı.", members: ["Suat Hayri Ürgüplü"] },
+    { id: "murat_karayalcin", name: "Murat Karayalçın", category: "siyaset", description: "Ankara Büyükşehir Belediye Başkanı ve SHP Genel Başkanı. Koç ailesi, Tandoğan ve Mardinizadeler ile bağlantılı.", members: ["Murat Karayalçın"] },
+    { id: "turan_gunes", name: "Turan Güneş", category: "siyaset", description: "Dışişleri Bakanı. İsmet İnönü ve İnegöllüzadeler ile bağlantıları araştırılmıştır.", members: ["Turan Güneş"] },
+    { id: "nuri_conker", name: "Nuri Conker", category: "siyaset", description: "Atatürk'ün Selanik'ten çocukluk arkadaşı ve milletvekili. Salih Bozok ile birlikte Sabetayist araştırmalarında adı geçer.", members: ["Nuri Conker", "Salih Bozok"] },
+
+    // === EK İŞ DÜNYASI ===
+    { id: "ipekci", name: "İpekçi Ailesi", category: "is", description: "Gazeteci Abdi İpekçi'nin ailesi. Ali Sami Yen ile bağlantıları ve İsmail Cem'in akrabası.", members: ["Abdi İpekçi"] },
+    { id: "kavala", name: "Kavala Ailesi", category: "is", description: "Osman Kavala'nın ailesi. Koç ailesi, Menemencioğlu ailesi ve Narmanlı ailesiyle bağlantılı.", members: ["Osman Kavala", "Mehmet Kavala"] },
+    { id: "sadikoglu", name: "Sadıkoğlu Ailesi", category: "is", description: "Dinozadeler yazısına göre Aslan Sadıkoğlu'nun kızı Hatice, Galatasaray başkanı Faruk Süren'in eşidir. Hatice'nin annesi şair Oktay Rıfat'ın amcasının kızıdır. Bir diğer kızı Aysel Bosna, Ömer Madra'nın kardeşlerinin annesidir. Aile, Sabancılarla birlikte Bossa markasını kuran işadamı Salih Bosna ile de akrabadır.", members: ["Aslan Sadıkoğlu", "Hatice Süren"] },
+    { id: "can_kirac", name: "Can Kıraç", category: "is", description: "Koç Holding'in efsanevi yöneticisi. Nemlizadeler, Kadir Has ve Verdi ailesiyle bağlantılı.", members: ["Can Kıraç"] },
+
+    // === EK MEDYA & SANAT ===
+    { id: "gulse_birsel", name: "Gülse Birsel", category: "medya", description: "Popüler yazar ve senarist. Haldun Dormen, Suat Hayri Ürgüplü ve Erboy ailesiyle bağlantıları araştırılmıştır.", members: ["Gülse Birsel"] },
+    { id: "ertugrul_ozkök", name: "Ertuğrul Özkök", category: "medya", description: "Hürriyet gazetesi genel yayın yönetmeni. İsmail Erez ve Seccadecibaşı İzzet Bey ile bağlantılı.", members: ["Ertuğrul Özkök"] },
+    { id: "orhan_pamuk", name: "Orhan Pamuk", category: "medya", description: "Nobel ödüllü yazar. Esin Eden, Mazlum İşkora ve İsmail Erez ile bağlantıları araştırılmıştır.", members: ["Orhan Pamuk"] },
+    { id: "ali_sami_yen", name: "Ali Sami Yen", category: "medya", description: "Galatasaray Spor Kulübü'nün kurucusu. İpekçiler ve Yılancıoğlu ailesiyle bağlantılı.", members: ["Ali Sami Yen"] },
+    { id: "haldun_dormen", name: "Haldun Dormen", category: "medya", description: "Türk tiyatrosunun efsanevi ismi. Gülse Birsel, Coşkun Kırca ve Erboy ailesiyle bağlantılı.", members: ["Haldun Dormen"] },
+    { id: "ayse_kulin", name: "Ayşe Kulin", category: "medya", description: "Bestseller yazar. 'Adı: Aylin' romanıyla akrabası Aylin Devrimel'in hayatını anlatmıştır. Aylin, Oklahoma'daki askeri hastanede görevliyken askerlere cesaret ilacı verildiğini raporlamış, Washington'da diplomat olmayı hedeflerken şüpheli şekilde hayatını kaybetmiştir. Suat Hayri Ürgüplü ve Neyzi ailesiyle bağlantılı olan Kulin, Kasım Gülek ve Bayındırlızadeler ile de akrabalık bağlarına sahiptir.", members: ["Ayşe Kulin", "Aylin Devrimel", "Tayibe (kızkardeş)"] },
+    { id: "zekeriya_sertel", name: "Zekeriya Sertel", category: "medya", description: "Gazeteci ve yazar. Kapancı Cemaati ve Karakaş Cemaati ile bağlantılı. Sabiha Sertel'in eşi.", members: ["Zekeriya Sertel", "Sabiha Sertel"] },
+    { id: "manço", name: "Manço Ailesi", category: "medya", description: "Halide Edip Adıvar ve Emre Gönensay ile bağlantıları araştırılmış aile.", members: ["Manço ailesi üyeleri"] },
+    { id: "sururi_cezzar", name: "Sururi & Cezzar", category: "medya", description: "Türk tiyatrosunun efsane çifti Gülriz Sururi ve Engin Cezzar. Blog'da Karakaş Cemaati ile bağlantılı olarak etiketlenmiştir. Haldun Dormen çevresiyle de ilişkili.", members: ["Gülriz Sururi", "Engin Cezzar"] },
+    { id: "fazil_say", name: "Fazıl Say", category: "medya", description: "Dünyaca ünlü piyanist ve besteci. Blog'da Kapancı Cemaati bağlamında etiketlenmiştir. Cemal Reşit Rey ve Osman Zeki Üngör çevresiyle ilişkilendirilir.", members: ["Fazıl Say"] },
+
+    // === İBRANİYET AKADEMİSİ BLOG ETİKETLERİNDEN ===
+    // Osmanlı Dönemi Paşaları & Devlet Adamları
+    { id: "abidin_pasa", name: "Abidin Paşa", category: "siyaset", description: "Osmanlı dönemi valisi ve devlet adamı. Dinozadeler ailesinin patriarşıdır. Oğlu Rasih Bey'in çocukları arasında ünlü ressam Abidin Dino vardır. Kızı Nefise, gazeteci Celal Nuri İleri ve Suphi Nuri İleri'nin annesidir. Kızı Sabire'nin torunu Ercüment Ekrem Talu aracılığıyla Defne Samyeli ile de soy bağı bulunur. Adana valiliği sırasında kuzeni Yusuf Dino Paşa ile birlikte Manisa'ya göç etmiştir.", members: ["Abidin Paşa", "Rasih Bey", "Nefise Hanım", "Sabire Hanım"] },
+    { id: "halil_rifat_pasa", name: "Halil Rıfat Paşa", category: "siyaset", description: "Osmanlı Sadrazamı. Sabetayist cemaat bağlantıları araştırma konusu olmuştur.", members: ["Halil Rıfat Paşa"] },
+    { id: "enver_pasa", name: "Enver Paşa", category: "siyaset", description: "İttihat ve Terakki Cemiyeti'nin liderlerinden ve Harbiye Nazırı. Selanik kökenli olup dönme cemaatleriyle bağlantıları araştırılmıştır. Birinci Dünya Savaşı'na girişin baş mimarlarından. Asya Türklüğü'nü birleştirme hayaliyle Orta Asya'ya geçip 1922'de hayatını kaybetti.", members: ["Enver Paşa", "Arzu Enver"] },
+    { id: "ibrahim_ethem_pasa", name: "Sadrazam İbrahim Ethem Paşa", category: "siyaset", description: "Osmanlı Sadrazamı. Sabetayist kökenli olduğu iddia edilmiştir.", members: ["İbrahim Ethem Paşa"] },
+    { id: "fethi_okyar", name: "Fethi Okyar", category: "siyaset", description: "Serbest Cumhuriyet Fırkası kurucusu ve Başbakan. Selanik kökenli bağlantıları araştırılmıştır.", members: ["Fethi Okyar"] },
+    { id: "kasim_gulek", name: "Kasım Gülek", category: "siyaset", description: "CHP Genel Sekreteri. Tayyibe Gülek ile birlikte Sabetayist bağlantıları incelenmiştir.", members: ["Kasım Gülek", "Tayyibe Gülek"] },
+    { id: "kenan_evren", name: "Kenan Evren", category: "siyaset", description: "12 Eylül askeri darbesinin lideri ve 7. Cumhurbaşkanı. Tartışmalı köken araştırmaları yapılmıştır.", members: ["Kenan Evren"] },
+    { id: "kilic_ali", name: "Kılıç Ali", category: "siyaset", description: "Milli Mücadele komutanı ve Atatürk'ün yakın arkadaşı. Dinozadeler yazısına göre, Kurtuluş Savaşı sonrası Suphi Nuri İleri'nin çıkardığı İleri gazetesini tabancasının kabzasıyla basarak gazeteciye zarar vermiştir. Selanik bağlantıları ve Nuri Conker ile Atatürk'ün yakın çevresi.", members: ["Kılıç Ali"] },
+    { id: "hasan_esat_isik", name: "Hasan Esat Işık", category: "siyaset", description: "Dışişleri ve Milli Savunma Bakanı. Sabetayist bağlantıları araştırılmıştır.", members: ["Hasan Esat Işık"] },
+
+    // Cumhuriyet Dönemi Siyasetçileri
+    { id: "latife_hanim", name: "Latife Hanım", category: "siyaset", description: "Atatürk'ün eşi (1923-1925). İzmir'in köklü Uşşakizadeler ailesine mensuptur. Uşşakizadeler, Evliyazadeler ile köklü akrabalık bağlarına sahiptir. Paris Sorbonne'ünde hukuk eğitimi almış nadir Osmanlı kadınlarındandır.", members: ["Latife Hanım"] },
+    { id: "ismail_erez", name: "İsmail Erez", category: "siyaset", description: "Büyükelçi. Seccadecibaşı İzzet Bey, Ertuğrul Özkök ve Edin ailesiyle bağlantılı.", members: ["İsmail Erez"] },
+    { id: "nazli_ilicak", name: "Nazlı Ilıcak", category: "medya", description: "Gazeteci ve siyasetçi. Sabetayist bağlantıları araştırma konusu olmuştur.", members: ["Nazlı Ilıcak"] },
+    { id: "hiram_abas", name: "Hiram Abas", category: "siyaset", description: "MİT mensubu. Blog'da 'Müşir Ahmet Şakir Paşa - Saman Belgerden - Osman Hamdi Bey - Hiram Abas' başlıklı gönderide Şakir Paşa ailesi ve Osman Hamdi Bey ile birlikte ele alınmıştır.", members: ["Hiram Abas"] },
+
+    // İş Dünyası
+    { id: "dinc_bilgin", name: "Dinç Bilgin", category: "is", description: "Sabah gazetesi ve ATV'nin eski sahibi. Medya sektöründe önemli rol oynamıştır.", members: ["Dinç Bilgin"] },
+    { id: "ercan_arikli", name: "Ercan Arıklı", category: "is", description: "İş insanı. Koç ailesi, Narmanlı ve Menemencioğlu ailesiyle bağlantılı.", members: ["Ercan Arıklı"] },
+    { id: "jak_kamhi", name: "Jak Kamhi", category: "is", description: "Profilo Holding kurucusu. Tüli Kamhi ile akrabalık bağı.", members: ["Jak Kamhi"] },
+    { id: "faruk_suren", name: "Faruk Süren", category: "is", description: "Galatasaray başkanı ve iş insanı. Dinozadeler yazısına göre eşi Hatice, Aslan Sadıkoğlu'nun kızıdır. Hatice'nin annesi şair Oktay Rıfat'ın amcasının kızıdır. Bu bağlantı Faruk Süren'i Dinozadeler, Nazım Hikmet ve Cebesoy aileleriyle akraba yapar.", members: ["Faruk Süren"] },
+    { id: "neyzi", name: "Neyzi Ailesi", category: "is", description: "Suat Hayri Ürgüplü ve Ayşe Kulin ile bağlantılı köklü iş ailesi.", members: ["Neyzi ailesi üyeleri"] },
+    { id: "burak_elmas", name: "Burak Elmas", category: "is", description: "Galatasaray başkanı ve iş insanı.", members: ["Burak Elmas"] },
+
+    // Medya, Sanat & Edebiyat
+    { id: "abidin_daver", name: "Abidin Daver", category: "medya", description: "Gazeteci ve denizcilik yazarı. Cumhuriyet dönemi basınının önemli isimlerinden. Blog'da Kapancı Cemaati ile birlikte etiketlenmiştir. Abidin Dino (Dinozadeler) ailesinin de adıyla benzerlik taşır ancak farklı kişidir.", members: ["Abidin Daver"] },
+    { id: "afife_jale", name: "Afife Jale", category: "medya", description: "Türkiye'nin ilk Müslüman kadın tiyatro oyuncusu. Blog'da Sabetayist toplulukla ilişkili olarak etiketlenmiştir. Selanik kökenli çevrelerle bağlantısı araştırma konusu olmuştur.", members: ["Afife Jale"] },
+    { id: "ahmet_ertegun", name: "Ahmet Ertegün", category: "medya", description: "Atlantic Records kurucusu. Dünya müzik endüstrisinin en etkili isimlerinden.", members: ["Ahmet Ertegün", "Nesuhi Ertegün"] },
+    { id: "ayla_algan", name: "Ayla Algan", category: "medya", description: "Sinema ve tiyatro oyuncusu. İnegöllüzadeler ile bağlantılı.", members: ["Ayla Algan"] },
+    { id: "ayten_alpman", name: "Ayten Alpman", category: "medya", description: "Türk pop müziğinin öncülerinden şarkıcı. Blog'da 'Ahmet Ertegün - Vedat Türkali - Karakaş Cemaati' başlıklı gönderide İlham Gencer ve Nilgün Belgün ile birlikte Karakaş Cemaati bağlamında etiketlenmiştir.", members: ["Ayten Alpman"] },
+    { id: "banu_alkan", name: "Banu Alkan", category: "medya", description: "Sinema oyuncusu. Blog'da Kapancı Cemaati bağlamında etiketlenmiştir. Yeşilçam'ın tanınmış isimlerinden olup aile kökenleri araştırma konusu olmuştur.", members: ["Banu Alkan"] },
+    { id: "cemal_resit_rey", name: "Cemal Reşit Rey", category: "medya", description: "Türk klasik müziğinin kurucularından besteci ve orkestra şefi.", members: ["Cemal Reşit Rey"] },
+    { id: "derya_alabora", name: "Alabora Ailesi", category: "medya", description: "Tiyatro ve sinema dünyasının tanınmış ailesi.", members: ["Derya Alabora", "Mehmet Ali Alabora", "Mustafa Alabora"] },
+    { id: "duygu_asena", name: "Duygu Asena", category: "medya", description: "Gazeteci ve yazar. 'Kadının Adı Yok' kitabıyla Türk feminizminin öncülerinden. Blog'da Çapanzadeler yazısında etiketlenmiş, ayrıca sabetayciavcisi blogunda 'Ressam Nihal Erem - Duygu Asena - Nihal Atsız - Ömer Üründül' başlıklı gönderide ele alınmıştır.", members: ["Duygu Asena"] },
+    { id: "fatma_girik", name: "Fatma Girik", category: "medya", description: "Yeşilçam'ın efsane oyuncusu ve siyasetçi. Blog'da 'Bülbülderesi Mezarlığından Bir Portre: Yusuf Atılgan' yazısında Yusuf Atılgan ve Durul Gence ile birlikte etiketlenmiştir. Bülbülderesi Mezarlığı, Sabetayist topluluk mezarlığı olarak bilinir.", members: ["Fatma Girik"] },
+    { id: "haldun_taner", name: "Haldun Taner", category: "medya", description: "Türk edebiyatının önemli hikayeci ve oyun yazarı. Kabare tiyatrosunun öncüsü.", members: ["Haldun Taner"] },
+    { id: "hifzi_topuz", name: "Hıfzı Topuz", category: "medya", description: "Gazeteci, yazar ve diplomat. Türk basın tarihinin en kapsamlı çalışmalarını yapmıştır. Blog'da Kapancı Cemaati ile bağlantılı olarak etiketlenmiştir.", members: ["Hıfzı Topuz"] },
+    { id: "hincal_uluc", name: "Hıncal Uluç", category: "medya", description: "Gazeteci ve spor yazarı. Sabah gazetesinin köşe yazarı olarak tanınır. Blog'da Sabetayist bağlantıları çerçevesinde etiketlenmiştir. Dinç Bilgin'in Sabah gazetesinde uzun yıllar yazmıştır.", members: ["Hıncal Uluç"] },
+    { id: "ilham_gencer", name: "İlham Gencer", category: "medya", description: "Piyanist ve besteci. Blog'da 'Ahmet Ertegün - Vedat Türkali - Karakaş Cemaati' başlıklı gönderide Ayten Alpman ve Nilgün Belgün ile birlikte Karakaş Cemaati bağlamında ele alınmıştır. Leyla Gencer ve Barış Pirhasan ile aynı yazıda etiketlenmiştir.", members: ["İlham Gencer"] },
+    { id: "leyla_gencer", name: "Leyla Gencer", category: "medya", description: "Dünyaca ünlü opera sopranosu. 'La Diva Turca' lakabıyla tanınır.", members: ["Leyla Gencer"] },
+    { id: "mahmut_yesari", name: "Mahmut Yesari", category: "medya", description: "Yazar ve gazeteci. Erken Cumhuriyet dönemi edebiyatının önemli ismi.", members: ["Mahmut Yesari"] },
+    { id: "nilgun_belgun", name: "Nilgün Belgün", category: "medya", description: "Tiyatro ve sinema oyuncusu. Blog'da 'Ahmet Ertegün - Vedat Türkali - Karakaş Cemaati' başlıklı gönderide İlham Gencer ve Ayten Alpman ile birlikte Karakaş Cemaati bağlamında etiketlenmiştir.", members: ["Nilgün Belgün"] },
+    { id: "oktay_rifat", name: "Oktay Rıfat", category: "medya", description: "Garip akımının kurucularından şair. Melih Cevdet Anday ve Orhan Veli ile birlikte Türk şiirini kökten değiştirdi. Dinozadeler yazısına göre anneannesi Leyla hanım, Ali Fuat Cebesoy'un teyzesidir - bu onu Nazım Hikmet ile de akraba yapar. Amcasının kızı, Faruk Süren'in eşi Hatice'nin annesidir.", members: ["Oktay Rıfat"] },
+    { id: "sevgi_soysal", name: "Sevgi Soysal", category: "medya", description: "Yazar. 'Yenişehir'de Bir Öğle Vakti' romanıyla tanınır.", members: ["Sevgi Soysal"] },
+    { id: "ugur_yucel", name: "Uğur Yücel", category: "medya", description: "Sinema oyuncusu ve yönetmen. Türk sinemasının önemli isimlerinden.", members: ["Uğur Yücel"] },
+    { id: "vedat_turkali", name: "Vedat Türkali", category: "medya", description: "Yazar ve senarist. Blog'da 'Ahmet Ertegün - Vedat Türkali - Karakaş Cemaati' başlıklı gönderide Karakaş Cemaati bağlamında Ahmet Ertegün, İlham Gencer, Ayten Alpman ve Nilgün Belgün ile birlikte ele alınmıştır. Zeynep Cassalini ile de aynı yazıda etiketlenmiştir.", members: ["Vedat Türkali"] },
+    { id: "yahya_kemal", name: "Yahya Kemal", category: "medya", description: "Türk şiirinin büyük ustası. Asıl adı Ahmed Agah. Selanik'te dönme okullarında okuduğu blog'da detaylı şekilde anlatılmaktadır. Muallim Şemsi Efendi'nin açtığı okula devam etmiş, Yakubi cemaati ile ilişkilendirilir. Paris'te uzun yıllar yaşamış, Batı şiiri ile Osmanlı geleneğini buluşturmuştur.", members: ["Yahya Kemal Beyatlı"] },
+    { id: "selahattin_pinar", name: "Selahattin Pınar", category: "medya", description: "Türk müziğinin büyük bestecilerinden. Sabetayist bağlantıları araştırılmıştır.", members: ["Selahattin Pınar"] },
+    { id: "sahin_alpay", name: "Şahin Alpay", category: "medya", description: "Gazeteci ve akademisyen. Zaman gazetesi köşe yazarı.", members: ["Şahin Alpay"] },
+    { id: "sanar_yurdatapan", name: "Şanar Yurdatapan", category: "medya", description: "Besteci ve insan hakları aktivisti.", members: ["Şanar Yurdatapan"] },
+    { id: "yusuf_atilgan", name: "Yusuf Atılgan", category: "medya", description: "Yazar. 'Aylak Adam' ve 'Anayurt Oteli' romanlarıyla Türk edebiyatının en özgün isimlerinden. Blog'da 'Bülbülderesi Mezarlığından Bir Portre: Yusuf Atılgan' başlıklı yazıda anlatılmış, Fatma Girik ve Durul Gence ile birlikte etiketlenmiştir. Bülbülderesi, İstanbul'daki Sabetayist mezarlığıdır.", members: ["Yusuf Atılgan"] },
+    { id: "cahit_ucuk", name: "Cahit Uçuk", category: "medya", description: "Yazar. Çocuk edebiyatı ve tarihi romanlarıyla tanınır.", members: ["Cahit Uçuk"] },
+
+    // Akademi & Düşünce
+    { id: "suha_gursey", name: "Süha Gürsey", category: "akademi", description: "Dünyaca ünlü Türk fizikçi. Kuantum fiziği alanında öncü çalışmalar yapmıştır.", members: ["Süha Gürsey"] },
+    { id: "talat_halman", name: "Talat Halman", category: "akademi", description: "İlk Kültür Bakanı, akademisyen ve çevirmen.", members: ["Talat Sait Halman"] },
+    { id: "nur_vergin", name: "Nur Vergin", category: "akademi", description: "Sosyolog ve akademisyen. Boğaziçi Üniversitesi öğretim üyesi.", members: ["Nur Vergin"] },
+    { id: "osman_zeki_ungor", name: "Osman Zeki Üngör", category: "akademi", description: "Cumhurbaşkanlığı Senfoni Orkestrası'nın kurucusu ve İstiklal Marşı'nın ilk şefi.", members: ["Osman Zeki Üngör"] },
+
+    // Tarihi Aileler
+    { id: "babanzadeler", name: "Babanzadeler", category: "tarih", description: "Kürt-Osmanlı kökenli köklü aile. Sabetayist bağlantıları araştırılmıştır.", members: ["Babanzade ailesi üyeleri"] },
+    { id: "bayindirlizade", name: "Bayındırlızadeler", category: "tarih", description: "Osmanlı dönemi köklü ailesi.", members: ["Bayındırlızade ailesi üyeleri"] },
+    { id: "curuksulu", name: "Çürüksulular", category: "tarih", description: "Osmanlı dönemi ailesi. Sabetayist bağlantıları araştırılmıştır.", members: ["Çürüksulu ailesi üyeleri"] },
+    { id: "kadizade", name: "Kadızadeler", category: "tarih", description: "Osmanlı dönemi ailesi. Sabetayist cemaat bağlantıları araştırılmıştır.", members: ["Kadızade ailesi üyeleri"] },
+    { id: "kinacizade", name: "Kınacızadeler", category: "tarih", description: "Kınacızade Şakir Bey'in ailesi. Sabetayist bağlantıları araştırılmıştır.", members: ["Kınacızade Şakir Bey"] },
+    { id: "voskay", name: "Voskay Ailesi", category: "tarih", description: "Sabetayist bağlantıları araştırılan tarihi aile.", members: ["Voskay ailesi üyeleri"] },
+    { id: "semsi_efendi", name: "Muallim Şemsi Efendi", category: "tarih", description: "Atatürk'ün ilk öğretmeni. Selanik'te Yakubi cemaatinin eğitim öncüsüdür. Blog'daki 'Galip Pasiner'in gözüyle Şemsi Efendi' yazısında, Karakaş cemaatinden Korgeneral Galip Pasiner'in Şemsi Efendi'yi hocası olarak anlattığı belirtilmektedir. Modern eğitim yöntemlerini Selanik'te uygulayan ilk eğitimcilerdendir.", members: ["Şemsi Efendi", "Galip Pasiner"] },
+
+    // === BLOG GÖNDERİLERİNDEN BULUNAN YENİ İSİMLER ===
+    { id: "ali_fuat_cebesoy", name: "Ali Fuat Cebesoy", category: "siyaset", description: "Milli Mücadele komutanı. Teyzesi Leyla hanım, Nazım Hikmet ve Oktay Rıfat'ın anneannesidir. Diğer teyzesi Hayriye hanım, Mehmet Ali Aybar'ın babaannesidir.", members: ["Ali Fuat Cebesoy", "İsmail Fazıl Paşa"] },
+    { id: "mehmet_ali_aybar", name: "Mehmet Ali Aybar", category: "siyaset", description: "Türkiye İşçi Partisi Genel Başkanı. Ali Fuat Cebesoy'un teyzesinin torunu. Dinozadeler ile akrabalık bağı.", members: ["Mehmet Ali Aybar"] },
+    { id: "omer_madra", name: "Ömer Madra", category: "medya", description: "Gazeteci ve Açık Radyo kurucusu. Sadıkoğlu ailesi ve Dinozadeler ile bağlantılı. Babası Maliye Nazırı Fuat Ağralı'nın damadı.", members: ["Ömer Madra", "Salih Madra", "Sezai Madra"] },
+    { id: "ercument_talu", name: "Ercüment Ekrem Talu", category: "medya", description: "Yazar ve gazeteci. Recaizade Mahmut Ekrem'in oğlu. Dinozadeler yazısına göre, Abidin Paşa'nın kızı Sabire hanım'ın kızı Feriha hanım ile evlenmiştir. Oğlu Muvakkar Ekrem Talu'nun eşi, Mehmet Ali Aybar'ın baldızıdır. Gazeteci-yazar Umur Talu ve Defne Samyeli'nin kızlarının babası Eren Talu, bu evlilikten gelmektedir.", members: ["Ercüment Ekrem Talu", "Umur Talu", "Eren Talu"] },
+    { id: "cindoruk", name: "Hüsamettin Cindoruk", category: "siyaset", description: "TBMM Başkanı ve DYP Genel Başkanı. Kayınvalidesi, Hasan Polatkan'ın baldızıdır. Ali Refik İleri ile akraba.", members: ["Hüsamettin Cindoruk"] },
+    { id: "kazim_taskent", name: "Kazım Taşkent", category: "is", description: "Yapı Kredi Bankası'nın 1944'te kurucusu. Çanakkale Savaşı'nın önemli komutanlarından Esat Bülkat Paşa'nın yeğenidir. Dinozadeler yazısına göre teyzesinin kızı Kudret hanım, Prof. Celal Şengör'ün anneannesidir - bu bağlantı Taşkent'i akademi dünyasıyla da ilişkilendirir.", members: ["Kazım Taşkent"] },
+    { id: "galip_pasiner", name: "Galip Pasiner", category: "siyaset", description: "Korgeneral. Akademisyen Marc David Baer'in Karakaş Cemaatinden olduğunu yazdığı isim. Blog'daki yazıya göre, hocası Muallim Şemsi Efendi'yi anlatan görgü tanığı olarak kayda geçirilmiştir. Oğlu Orhan Pasiner'in oğlu Ali Pasiner, Leyla İpekçi Kaplanoğlu'nun teyzesinin eşidir. Ali Pasiner'in ilk eşi Figen Mirel, daha sonra Kapancı Cemaatinden işadamı Halil Bezmen ile evlenmiştir.", members: ["Galip Pasiner", "Orhan Pasiner", "Ali Pasiner"] },
+    { id: "suphi_nuri_ileri", name: "Suphi Nuri İleri", category: "medya", description: "Gazeteci, yazar ve avukat. Ağabeyi Celal Nuri İleri'nin Malta'ya sürülmesinin ardından Ati-İleri gazetesinin başına geçmiş, Atatürk de takma isimlerle bu gazetede yazılar yayınlamıştır. Türkiye Sosyalist Partisi Genel Sekreterliği de yapmıştır. Abidin Dino'nun ablası Leyla Hanım ile evlenmiştir. Şeyh Said İsyanı'nı dolaylı teşvik ettiği gerekçesiyle İstiklal Mahkemesi'nde yargılanmış ancak beraat etmiştir. Kılıç Ali tarafından gazetesi basılmış ve yaralanmıştır.", members: ["Suphi Nuri İleri", "Rasih Nuri İleri"] },
+    { id: "esat_bulkat", name: "Esat Bülkat Paşa", category: "siyaset", description: "Çanakkale Savaşı'nın önemli komutanlarından. Dinozadeler ile akraba. Yeğeni Kazım Taşkent.", members: ["Esat Bülkat Paşa"] },
+    { id: "salih_bozok", name: "Salih Bozok", category: "siyaset", description: "Atatürk'ün Selanik'ten en yakın arkadaşı ve yaveri. Sabetayist bağlantıları araştırılmıştır.", members: ["Salih Bozok", "Sedef Bozok"] },
+    { id: "halil_bezmen", name: "Halil Bezmen", category: "is", description: "Kapancı Cemaatinden işadamı. Ali Pasiner'in eski eşi Figen Mirel ile evlenmiştir. Bezmenler ile bağlantılı.", members: ["Halil Bezmen"] }
+];
+
+const sabetayConnections = [
+    // Evliyazadeler bağlantıları
+    { source: "evliyazadeler", target: "inonu", type: "evlilik", description: "İsmet İnönü, Evliyazade Naciye ile evlenmiştir. İnönü bu evlilikle Evliyazadeler'in damadı olmuştur" },
+    { source: "evliyazadeler", target: "dinçkok", type: "akrabalik", description: "Evliyazadeler ve Dinçkök ailesi evlilik yoluyla akraba. Raif Dinçkök'ün eşi Evliyazade soyundandır" },
+
+    // İnegöllüzadeler bağlantıları
+    { source: "inegolluzadeler", target: "manyasizadeler", type: "akrabalik", description: "İnegöllüzadeler ve Manyasizadeler kız alıp verme yoluyla iç içe geçmiş ailelerdir" },
+    { source: "inegolluzadeler", target: "abidin_dino", type: "akrabalik", description: "İnegöllüzadeler'den (Son Sadrazam) Ahmet Tevfik Paşa, Manyasizadeler üzerinden Abidin Dino'nun akrabasıdır" },
+    { source: "inegolluzadeler", target: "boyner", type: "akrabalik", description: "Boyner ailesi, İnegöllüzadeler soyundan evlilik yoluyla akrabadır" },
+    { source: "inegolluzadeler", target: "eczacibasi", type: "akrabalik", description: "Eczacıbaşı ailesi, İnegöllüzadeler ile evlilik yoluyla akrabadır" },
+    { source: "inegolluzadeler", target: "inonu", type: "akrabalik", description: "İnegöllüzadeler - Uşaklıgiller - İsmet İnönü bağlantısı" },
+    { source: "inegolluzadeler", target: "mithat_pasa", type: "akrabalik", description: "İnegöllüzadeler ve Mithat Paşa arasındaki akrabalık bağı" },
+
+    // Kapancı Cemaati bağlantıları
+    { source: "kapanci", target: "nevzat_tandogan", type: "cemaat", description: "Nevzat Tandoğan'ın Kapancı cemaati ile bağı" },
+    { source: "kapanci", target: "edin", type: "cemaat", description: "Edin ailesi Kapancı cemaatine mensuptur" },
+    { source: "kapanci", target: "kadir_has", type: "cemaat", description: "Kadir Has'ın Kapancı cemaati ile bağlantısı" },
+    { source: "kapanci", target: "erol_simavi", type: "cemaat", description: "Erol Simavi'nin Kapancı cemaati ile bağlantısı" },
+    { source: "kapanci", target: "mardinizadeler", type: "cemaat", description: "Mardinizadeler Kapancı cemaatine mensuptur" },
+
+    // Manyasizadeler bağlantıları
+    { source: "manyasizadeler", target: "muhtar_kent", type: "akrabalik", description: "Muhtar Kent'in babası Necdet Kent, Kazım İnanç aracılığıyla Manyasizadeler'le akrabadır" },
+
+    // Eliyeşil ailesi bağlantıları
+    { source: "eliyesil", target: "karamehmet", type: "akrabalik", description: "Karamehmet ailesi, Eliyeşil ailesinden kız almıştır. Mehmet Emin Karamehmet'in eşi Eliyeşil soyundandır" },
+    { source: "eliyesil", target: "bezmen", type: "akrabalik", description: "Eliyeşil ve Bezmen aileleri arasında karşılıklı kız alıp verme yoluyla akrabalık" },
+    { source: "eliyesil", target: "boyner", type: "akrabalik", description: "Eliyeşil ailesi - Besler ailesi - Boyner ailesi bağlantısı" },
+
+    // Edin ailesi bağlantıları
+    { source: "edin", target: "dedeman", type: "is_ortakligi", description: "Edin ailesi ve Dedeman ailesi arasındaki bağlantı" },
+    { source: "edin", target: "vedat_milor", type: "akrabalik", description: "Vedat Milor ile Edin ailesi bağlantısı" },
+    { source: "edin", target: "nevzat_tandogan", type: "akrabalik", description: "Nevzat Tandoğan ve Edin ailesi bağlantısı" },
+    { source: "edin", target: "kazim_ozalp", type: "akrabalik", description: "Kazım Özalp - Naili Moran - Edin ailesi bağlantısı" },
+
+    // Dinçkök ailesi bağlantıları
+    { source: "dinçkok", target: "bahriye_ucok", type: "akrabalik", description: "Bahriye Üçok'un eşi, Raif Dinçkök'ün dayısı Sadri Maksudi Arsal'ın oğludur. Dinçkök'ün dayısının gelini" },
+    { source: "dinçkok", target: "nuri_colakoglu", type: "is_ortakligi", description: "Dinçkök ailesi ile Nuri Çolakoğlu arasındaki iş bağlantısı" },
+
+    // Koç ailesi bağlantıları
+    { source: "koc", target: "inonu", type: "akrabalik", description: "Koç ailesi, Kadirbeyoğlu-Ataç ailesi üzerinden İnönü ailesiyle uzak akrabadır" },
+
+    // Gorbon ailesi bağlantıları
+    { source: "gorbon", target: "mesut_yilmaz", type: "akrabalik", description: "Mesut Yılmaz'ın eşi Berna, Gorbon-Keçecizade soyundan gelmektedir" },
+    { source: "gorbon", target: "defne_samyeli", type: "akrabalik", description: "Defne Samyeli, Gorbon ailesiyle evlilik yoluyla akrabadır" },
+    { source: "gorbon", target: "keçecizadeler", type: "akrabalik", description: "Gorbon ailesi ve Keçecizadeler arasındaki akrabalık" },
+
+    // Şakir Paşa ailesi bağlantıları
+    { source: "sakir_pasa", target: "husrev_gerede", type: "akrabalik", description: "Hüsrev Gerede, Şakir Paşa ailesinin damadıdır" },
+
+    // Hüsrev Gerede bağlantıları
+    { source: "husrev_gerede", target: "osman_hamdi", type: "akrabalik", description: "Hüsrev Gerede, Osman Hamdi Bey'in kızı Nazlı'nın eşidir (Osman Hamdi'nin damadı)" },
+
+    // Tüli Kamhi bağlantıları
+    { source: "tuli_kamhi", target: "celal_sengor", type: "akrabalik", description: "Tüli Kamhi, Celal Şengör'ün Menteşe ailesi üzerinden akrabasıdır" },
+    { source: "tuli_kamhi", target: "katipzadeler", type: "akrabalik", description: "Tüli Kamhi ve Katipzadeler bağlantısı" },
+
+    // Nazım Hikmet bağlantıları
+    { source: "nazim_hikmet", target: "halide_edip", type: "akrabalik", description: "Nazım Hikmet ve Halide Edip Adıvar arasında uzak akrabalık" },
+    { source: "nazim_hikmet", target: "abidin_dino", type: "akrabalik", description: "Nazım Hikmet'in anneannesi Leyla hanım, Abidin Dino'nun büyükbabası Abidin Paşa'nın teyzesidir. Teyze çocukları" },
+
+    // Aydın Doğan bağlantıları
+    { source: "aydin_dogan", target: "nuri_colakoglu", type: "is_ortakligi", description: "Aydın Doğan ve Nuri Çolakoğlu medya sektöründeki ortaklık" },
+
+    // Ferzan Özpetek bağlantıları
+    { source: "ferzan_ozpetek", target: "husrev_gerede", type: "akrabalik", description: "Ferzan Özpetek, Zeynep Aksu'nun torunu olup Fethi Ahmet Paşa ve Tarık Zafer Tunaya üzerinden Hüsrev Gerede'yle akrabadır" },
+
+    // Mardinizadeler bağlantıları
+    { source: "mardinizadeler", target: "mithat_pasa", type: "akrabalik", description: "Mardinizadeler - İzzet Mehmet Paşa - Mithat Paşa bağlantısı" },
+
+    // Hasan Polatkan and Kazım Dirik
+    { source: "hasan_polatkan", target: "kazim_dirik", type: "akrabalik", description: "Hasan Polatkan ve Kazım Dirik - Germirli ailesi üzerinden bağlantı" },
+
+    // Yakubi cemaati
+    { source: "yakubi", target: "evliyazadeler", type: "cemaat", description: "Evliyazadeler ile Yakubi cemaati arasındaki tarihi bağlantı" },
+
+    // Dedeman - Nuri Çolakoğlu
+    { source: "dedeman", target: "nuri_colakoglu", type: "is_ortakligi", description: "Dedeman ailesi ve Nuri Çolakoğlu arasındaki bağlantı" },
+
+    // === YENİ BAĞLANTILAR ===
+    // Karakaş Cemaati
+    { source: "karakas", target: "kapanci", type: "cemaat", description: "Karakaş ve Kapancı cemaatleri arasındaki tarihi ilişki" },
+    { source: "karakas", target: "zekeriya_sertel", type: "cemaat", description: "Zekeriya Sertel'in Karakaş Cemaati ile bağlantısı" },
+    { source: "karakas", target: "suat_urguplu", type: "cemaat", description: "Suat Hayri Ürgüplü - Karakaş Cemaati bağlantısı" },
+
+    // Menemencioğlu & Narmanlı
+    { source: "menemencioglu", target: "koc", type: "akrabalik", description: "Koç ailesi - Menemencioğlu ailesi akrabalık bağı" },
+    { source: "menemencioglu", target: "narmanli", type: "akrabalik", description: "Menemencioğlu ve Narmanlı aileleri arasındaki bağlantı" },
+    { source: "narmanli", target: "kavala", type: "akrabalik", description: "Narmanlı ailesi ve Kavala ailesi bağlantısı" },
+    { source: "narmanli", target: "edin", type: "akrabalik", description: "Narmanlı ailesi ve Edin ailesi bağlantısı" },
+    { source: "kapanci", target: "menemencioglu", type: "cemaat", description: "Menemencioğlu ailesi Kapancı cemaatiyle bağlantılı" },
+
+    // Vafi ailesi
+    { source: "vafi", target: "husrev_gerede", type: "akrabalik", description: "Vafi ailesi ve Hüsrev Gerede arasındaki akrabalık" },
+    { source: "vafi", target: "tuli_kamhi", type: "akrabalik", description: "Vafi ailesi ve Tüli Kamhi bağlantısı" },
+
+    // Ecevit ailesi
+    { source: "ecevit", target: "ali_sami_yen", type: "akrabalik", description: "Rahşan Ecevit, Aydın Boysan'ın akrabasıdır. Boysan ailesi Ali Sami Yen'le evlilik yoluyla bağlıdır" },
+    { source: "ecevit", target: "nuri_conker", type: "akrabalik", description: "Bülent Ecevit - Hasan Rıza Soyak - Nuri Conker bağlantısı" },
+
+    // Suat Hayri Ürgüplü
+    { source: "suat_urguplu", target: "bezmen", type: "akrabalik", description: "Suat Hayri Ürgüplü ve Bezmenler arasındaki bağlantı" },
+    { source: "suat_urguplu", target: "celal_sengor", type: "akrabalik", description: "Suat Hayri Ürgüplü ve Celal Şengör arasındaki bağlantı" },
+    { source: "suat_urguplu", target: "ayse_kulin", type: "akrabalik", description: "Suat Hayri Ürgüplü - Neyzi ailesi - Ayşe Kulin bağlantısı" },
+    { source: "suat_urguplu", target: "kapanci", type: "cemaat", description: "Suat Hayri Ürgüplü Kapancı Cemaati bağlantısı" },
+
+    // Gülse Birsel & Haldun Dormen
+    { source: "gulse_birsel", target: "haldun_dormen", type: "akrabalik", description: "Gülse Birsel ve Haldun Dormen arasındaki bağlantı" },
+    { source: "gulse_birsel", target: "suat_urguplu", type: "akrabalik", description: "Gülse Birsel - Suat Hayri Ürgüplü bağlantısı" },
+    { source: "gulse_birsel", target: "zekeriya_sertel", type: "akrabalik", description: "Gülse Birsel ve Zekeriya Sertel bağlantısı" },
+
+    // Orhan Pamuk
+    { source: "orhan_pamuk", target: "edin", type: "akrabalik", description: "Orhan Pamuk, Esin Eden aracılığıyla Mazlum İşkora ve İsmail Erez üzerinden Edin ailesine bağlıdır" },
+
+    // Ertuğrul Özkök
+    { source: "ertugrul_ozkök", target: "aydin_dogan", type: "is_ortakligi", description: "Ertuğrul Özkök - Hürriyet - Aydın Doğan bağlantısı" },
+
+    // İpekçi
+    { source: "ipekci", target: "ali_sami_yen", type: "akrabalik", description: "Ali Sami Yen, İpekçi ailesiyle Yılancıoğlu ailesi üzerinden akrabadır" },
+    { source: "ipekci", target: "ismail_cem", type: "akrabalik", description: "İsmail Cem'in soyadı İpekçi'dir. İpekçi ailesinin bir üyesidir" },
+
+    // Kavala
+    { source: "kavala", target: "koc", type: "is_ortakligi", description: "Kavala ailesi ve Koç ailesi bağlantısı" },
+    { source: "kavala", target: "menemencioglu", type: "akrabalik", description: "Kavala ailesi ve Menemencioğlu ailesi bağlantısı" },
+
+    // Koç - Murat Karayalçın - Mardinizadeler
+    { source: "koc", target: "nevzat_tandogan", type: "akrabalik", description: "Koç ailesi - Nevzat Tandoğan - Temo ailesi bağlantısı" },
+    { source: "koc", target: "murat_karayalcin", type: "akrabalik", description: "Koç ailesi ve Murat Karayalçın bağlantısı" },
+    { source: "murat_karayalcin", target: "mardinizadeler", type: "akrabalik", description: "Murat Karayalçın ve Mardinizadeler bağlantısı" },
+
+    // Can Kıraç
+    { source: "can_kirac", target: "koc", type: "is_ortakligi", description: "Can Kıraç - Koç Holding yöneticisi" },
+    { source: "can_kirac", target: "kadir_has", type: "akrabalik", description: "Can Kıraç ve Kadir Has bağlantısı" },
+    { source: "can_kirac", target: "nemlizadeler", type: "akrabalik", description: "Can Kıraç ve Nemlizadeler bağlantısı" },
+
+    // Çapanzadeler
+    { source: "capanzadeler", target: "kapanci", type: "cemaat", description: "Çapanzadeler ve Kapancı Cemaati bağlantısı" },
+
+    // Turan Güneş
+    { source: "turan_gunes", target: "inonu", type: "akrabalik", description: "Turan Güneş ve İnönü ailesi bağlantısı" },
+    { source: "turan_gunes", target: "inegolluzadeler", type: "akrabalik", description: "Turan Güneş - Halil Berktay - İnegöllüzadeler bağlantısı" },
+
+    // Manço & Halide Edip
+    { source: "manço", target: "halide_edip", type: "akrabalik", description: "Manço ailesi ve Halide Edip Adıvar bağlantısı" },
+    { source: "halide_edip", target: "bezmen", type: "akrabalik", description: "Halide Edip Adıvar ve Bezmenler arasındaki bağlantı" },
+
+    // Feyzioğlu
+    { source: "feyzioğlu", target: "inegolluzadeler", type: "akrabalik", description: "Feyzioğlu ailesi ve İnegöllüzadeler bağlantısı" },
+
+    // Nemlizadeler - Kadir Has
+    { source: "nemlizadeler", target: "kadir_has", type: "akrabalik", description: "Nemlizadeler ve Kadir Has bağlantısı" },
+
+    // Zekeriya Sertel
+    { source: "zekeriya_sertel", target: "kapanci", type: "cemaat", description: "Zekeriya Sertel - Kapancı Cemaati bağlantısı" },
+
+    // Yakubi - Nuri Conker
+    { source: "yakubi", target: "nuri_conker", type: "cemaat", description: "Nuri Conker ve Yakubi cemaati bağlantısı" },
+
+    // Aynizadeler
+    { source: "aynizadeler", target: "evliyazadeler", type: "akrabalik", description: "Aynizadeler - Seyfullah Esin - Evliyazadeler bağlantısı" },
+
+    // Bezmen - Sabiha Sertel
+    { source: "bezmen", target: "zekeriya_sertel", type: "akrabalik", description: "Bezmen ailesi ve Zekeriya/Sabiha Sertel bağlantısı" },
+
+    // === YENİ BAĞLANTILAR (İbraniyet Blog) ===
+    // Osmanlı Paşaları & Cemaatler
+    { source: "enver_pasa", target: "kapanci", type: "cemaat", description: "Enver Paşa'nın Selanik Sabetayist cemaatleriyle bağlantısı" },
+    { source: "halil_rifat_pasa", target: "kapanci", type: "cemaat", description: "Halil Rıfat Paşa ve Kapancı Cemaati bağlantısı" },
+    { source: "ibrahim_ethem_pasa", target: "karakas", type: "cemaat", description: "Sadrazam İbrahim Ethem Paşa ve Karakaş Cemaati bağlantısı" },
+    { source: "abidin_pasa", target: "kapanci", type: "cemaat", description: "Abidin Paşa Kapancı Cemaati bağlantısı" },
+    { source: "semsi_efendi", target: "yakubi", type: "cemaat", description: "Muallim Şemsi Efendi ve Yakubi Cemaati bağlantısı" },
+    { source: "kinacizade", target: "kapanci", type: "cemaat", description: "Kınacızadeler ve Kapancı Cemaati bağlantısı" },
+    { source: "kadizade", target: "karakas", type: "cemaat", description: "Kadızadeler ve Karakaş Cemaati bağlantısı" },
+
+    // Cumhuriyet Dönemi Siyasetçileri
+    { source: "fethi_okyar", target: "nuri_conker", type: "akrabalik", description: "Fethi Okyar ve Nuri Conker - Atatürk'ün Selanikli çevresi" },
+    { source: "kilic_ali", target: "nuri_conker", type: "akrabalik", description: "Kılıç Ali ve Nuri Conker - Milli Mücadele arkadaşlığı" },
+    { source: "latife_hanim", target: "evliyazadeler", type: "akrabalik", description: "Latife Hanım'ın ailesi Uşşakizadeler, Evliyazadeler ile kuzendir. Aynı Selanik kökenli cemaatten" },
+    { source: "ismail_erez", target: "edin", type: "akrabalik", description: "İsmail Erez ve Edin ailesi bağlantısı" },
+    { source: "ismail_erez", target: "ertugrul_ozkök", type: "akrabalik", description: "İsmail Erez - Seccadecibaşı İzzet Bey - Ertuğrul Özkök bağlantısı" },
+    { source: "kasim_gulek", target: "kapanci", type: "cemaat", description: "Kasım Gülek ve Kapancı Cemaati bağlantısı" },
+
+    // İş dünyası bağlantıları
+    { source: "ercan_arikli", target: "narmanli", type: "akrabalik", description: "Ercan Arıklı ve Narmanlı ailesi bağlantısı" },
+    { source: "ercan_arikli", target: "koc", type: "is_ortakligi", description: "Ercan Arıklı ve Koç ailesi bağlantısı" },
+    { source: "jak_kamhi", target: "tuli_kamhi", type: "akrabalik", description: "Jak Kamhi ve Tüli Kamhi aynı Kamhi ailesinden. Soy akrabalığı" },
+    { source: "dinc_bilgin", target: "aydin_dogan", type: "is_ortakligi", description: "Dinç Bilgin ve Aydın Doğan - medya sektörü bağlantısı" },
+    { source: "neyzi", target: "suat_urguplu", type: "akrabalik", description: "Neyzi ailesi ve Suat Hayri Ürgüplü bağlantısı" },
+    { source: "neyzi", target: "ayse_kulin", type: "akrabalik", description: "Neyzi ailesi ve Ayşe Kulin bağlantısı" },
+    { source: "faruk_suren", target: "ali_sami_yen", type: "akrabalik", description: "Faruk Süren - Ali Sami Yen - Galatasaray bağlantısı" },
+    { source: "burak_elmas", target: "faruk_suren", type: "is_ortakligi", description: "Burak Elmas ve Faruk Süren - Galatasaray bağlantısı" },
+
+    // Medya & Sanat bağlantıları
+    { source: "ayla_algan", target: "inegolluzadeler", type: "akrabalik", description: "Ayla Algan ve İnegöllüzadeler bağlantısı" },
+    { source: "derya_alabora", target: "kapanci", type: "cemaat", description: "Alabora ailesi ve Kapancı Cemaati bağlantısı" },
+    { source: "ahmet_ertegun", target: "evliyazadeler", type: "akrabalik", description: "Ahmet Ertegün'ün babası Münir Ertegün, Evliyazadeler soyundandır" },
+    { source: "cemal_resit_rey", target: "kapanci", type: "cemaat", description: "Cemal Reşit Rey - Kapancı Cemaati bağlantısı" },
+    { source: "leyla_gencer", target: "karakas", type: "cemaat", description: "Leyla Gencer ve Karakaş Cemaati bağlantısı" },
+    { source: "haldun_taner", target: "halide_edip", type: "akrabalik", description: "Haldun Taner ve Halide Edip Adıvar çevresi bağlantısı" },
+    { source: "oktay_rifat", target: "nazim_hikmet", type: "akrabalik", description: "Oktay Rıfat ve Nazım Hikmet'in ortak anneannesi Leyla hanım'dır (Ali Fuat Cebesoy'un teyzesi). Kuzen" },
+    { source: "yahya_kemal", target: "yakubi", type: "cemaat", description: "Yahya Kemal Beyatlı'nın Selanik kökenli Yakubi bağlantıları" },
+    { source: "selahattin_pinar", target: "kapanci", type: "cemaat", description: "Selahattin Pınar ve Kapancı Cemaati bağlantısı" },
+
+    // Akademi
+    { source: "suha_gursey", target: "celal_sengor", type: "akrabalik", description: "Süha Gürsey ve Celal Şengör - akademi çevresi bağlantısı" },
+    { source: "talat_halman", target: "suat_urguplu", type: "akrabalik", description: "Talat Halman ve Suat Hayri Ürgüplü bağlantısı" },
+    { source: "osman_zeki_ungor", target: "cemal_resit_rey", type: "akrabalik", description: "Osman Zeki Üngör ve Cemal Reşit Rey - müzik çevresi bağlantısı" },
+
+    // Tarihi aileler arası
+    { source: "babanzadeler", target: "mardinizadeler", type: "akrabalik", description: "Babanzadeler ve Mardinizadeler bağlantısı" },
+    { source: "bayindirlizade", target: "kapanci", type: "cemaat", description: "Bayındırlızadeler ve Kapancı Cemaati bağlantısı" },
+    { source: "voskay", target: "yakubi", type: "cemaat", description: "Voskay ailesi ve Yakubi Cemaati bağlantısı" },
+    { source: "curuksulu", target: "karakas", type: "cemaat", description: "Çürüksulular ve Karakaş Cemaati bağlantısı" },
+
+    // === BLOG GÖNDERİLERİNDEN BULUNAN İLİŞKİLER ===
+    // Dinozadeler yazısından
+    { source: "ali_fuat_cebesoy", target: "nazim_hikmet", type: "akrabalik", description: "Ali Fuat Cebesoy'un teyzesi Leyla hanım, Nazım Hikmet'in anneannesidir" },
+    { source: "ali_fuat_cebesoy", target: "oktay_rifat", type: "akrabalik", description: "Ali Fuat Cebesoy'un teyzesi Leyla hanım, Oktay Rıfat'ın anneannesidir" },
+    { source: "ali_fuat_cebesoy", target: "mehmet_ali_aybar", type: "akrabalik", description: "Cebesoy'un diğer teyzesi Hayriye hanım, Aybar'ın babaannesidir" },
+    { source: "mehmet_ali_aybar", target: "abidin_dino", type: "akrabalik", description: "Mehmet Ali Aybar'ın babaannesi Hayriye hanım, Abidin Dino'nun büyükbabası Abidin Paşa'nın teyzesidir. Teyze torunu" },
+    { source: "suphi_nuri_ileri", target: "abidin_dino", type: "evlilik", description: "Suphi Nuri İleri, Abidin Dino'nun ablası Leyla hanım ile evlenerek Dino'nun eniştesi olmuştur" },
+    { source: "suphi_nuri_ileri", target: "kilic_ali", type: "akrabalik", description: "Kılıç Ali, İleri gazetesini basarak Suphi Nuri'ye zarar vermiştir" },
+    { source: "ercument_talu", target: "abidin_dino", type: "evlilik", description: "Ercüment Ekrem Talu, Abidin Paşa'nın kızı Sabire'nin kızı Feriha hanım'la evlenerek Dinozadeler'in damadı olmuştur" },
+    { source: "ercument_talu", target: "defne_samyeli", type: "akrabalik", description: "Defne Samyeli, Ercüment Ekrem Talu'nun oğlu Erdem'in oğlu Eren'in kızıdır. Büyük-büyükbaba torunu" },
+    { source: "ercument_talu", target: "mehmet_ali_aybar", type: "akrabalik", description: "Ercüment'in oğlu Muvakkar'ın eşi Hasret hanım, Mehmet Ali Aybar'ın baldızıdır (eşinin kızkardeşi)" },
+    { source: "kavala", target: "abidin_dino", type: "akrabalik", description: "Osman Kavala'nın amcasının eşi Zema hanım, Rasih Nuri İleri'nin eşi Bedia'nın amcasının kızıdır. Amca çocukları" },
+    { source: "faruk_suren", target: "sadikoglu", type: "evlilik", description: "Faruk Süren, Aslan Sadıkoğlu'nun kızı Hatice ile evlenerek Sadıkoğlu'nun damadı olmuştur" },
+    { source: "sadikoglu", target: "oktay_rifat", type: "akrabalik", description: "Faruk Süren'in eşi Hatice'nin annesi, Oktay Rıfat'ın amcasının kızıdır. Amca kızı" },
+    { source: "sadikoglu", target: "omer_madra", type: "akrabalik", description: "Aslan Sadıkoğlu'nun kızı Aysel Bosna, Ömer Madra'nın üvey annesidir. Ömer Madra'nın kardeşleri Salih ve Sezai'nin annesi" },
+    { source: "celal_sengor", target: "kazim_taskent", type: "akrabalik", description: "Kazım Taşkent'in teyzesinin kızı Kudret hanım, Celal Şengör'ün anneannesidir. Teyze kızı çocuğu" },
+    { source: "kazim_taskent", target: "esat_bulkat", type: "akrabalik", description: "Kazım Taşkent, Esat Bülkat Paşa'nın kızkardeşinin oğludur. Yeğen (teyze oğlu)" },
+    { source: "esat_bulkat", target: "abidin_dino", type: "akrabalik", description: "Esat Bülkat Paşa'nın kızkardeşinin oğlu, Abidin Paşa'nın kuzeni Yusuf Dino Paşa'nın kızıyla evlendi. Dünür" },
+    { source: "cindoruk", target: "hasan_polatkan", type: "akrabalik", description: "Cindoruk'un kayınvalidesi Meryem hanım, Hasan Polatkan'ın baldızıdır (eşinin kızkardeşi). Kayınvalide baldızlığı" },
+    { source: "cindoruk", target: "abidin_dino", type: "akrabalik", description: "Cindoruk'un kayınpederinin eşi Berrin Soyugenç, Dinozadeler'den Ali Refik İleri'nin kuzeninin eşidir. Kayınpeder üzerinden" },
+    { source: "galip_pasiner", target: "karakas", type: "cemaat", description: "Marc David Baer, Galip Pasiner'in Karakaş Cemaatinden olduğunu yazmıştır" },
+    { source: "galip_pasiner", target: "ipekci", type: "akrabalik", description: "Galip Pasiner'in torunu Ali Pasiner, Leyla İpekçi Kaplanoğlu'nun teyzesinin eşidir. Teyze eniştesi" },
+    { source: "galip_pasiner", target: "semsi_efendi", type: "akrabalik", description: "Korgeneral Galip Pasiner, Muallim Şemsi Efendi'nin öğrencisiydi. Hoca-talebe ilişkisi" },
+    { source: "halil_bezmen", target: "bezmen", type: "akrabalik", description: "Halil Bezmen, Bezmen ailesinden. Kapancı Cemaati mensubu" },
+    { source: "halil_bezmen", target: "galip_pasiner", type: "evlilik", description: "Halil Bezmen, Ali Pasiner'in boşandığı eşi Figen Mirel ile evlenmiştir. Ali Pasiner'in eski eşinin yeni kocası" },
+    { source: "salih_bozok", target: "nuri_conker", type: "akrabalik", description: "Salih Bozok ve Nuri Conker - Atatürk'ün Selanikli yakın çevresi" },
+    { source: "salih_bozok", target: "latife_hanim", type: "akrabalik", description: "Salih Bozok - Atatürk'ün en yakın yaveri, Latife Hanım döneminde de görev yapmıştır" },
+
+    // === ORPHAN DÜĞÜMLER İÇİN YENİ BAĞLANTILAR ===
+    // Karakaş Cemaati blog yazısından (Ahmet Ertegün - Vedat Türkali - Karakaş grubundan)
+    { source: "vedat_turkali", target: "karakas", type: "cemaat", description: "Vedat Türkali - Blog'da Karakaş Cemaati yazısında ele alınmıştır" },
+    { source: "vedat_turkali", target: "ahmet_ertegun", type: "akrabalik", description: "Blog'da aynı yazıda Karakaş Cemaati bağlamında birlikte etiketlenmiştir" },
+    { source: "ilham_gencer", target: "karakas", type: "cemaat", description: "İlham Gencer - Blog'da Karakaş Cemaati yazısında ele alınmıştır" },
+    { source: "ayten_alpman", target: "karakas", type: "cemaat", description: "Ayten Alpman - Blog'da Karakaş Cemaati yazısında ele alınmıştır" },
+    { source: "nilgun_belgun", target: "karakas", type: "cemaat", description: "Nilgün Belgün - Blog'da Karakaş Cemaati yazısında ele alınmıştır" },
+    { source: "ilham_gencer", target: "ayten_alpman", type: "akrabalik", description: "Blog'da aynı yazıda birlikte etiketlenmiş sanatçı çevresi" },
+
+    // Bülbülderesi Mezarlığı yazısından
+    { source: "fatma_girik", target: "yusuf_atilgan", type: "akrabalik", description: "Blog'da Bülbülderesi Mezarlığı yazısında birlikte etiketlenmiştir" },
+
+    // Çapanzadeler yazısından
+    { source: "duygu_asena", target: "capanzadeler", type: "akrabalik", description: "Blog'da Çapanzadeler yazısında birlikte etiketlenmiştir" },
+
+    // Şakir Paşa yazısından
+    { source: "hiram_abas", target: "sakir_pasa", type: "akrabalik", description: "Blog'da Şakir Paşa yazısında birlikte ele alınmıştır" },
+    { source: "hiram_abas", target: "osman_hamdi", type: "akrabalik", description: "Blog'da Osman Hamdi Bey ile birlikte ele alınmıştır" },
+
+    // Sururi & Cezzar
+    { source: "sururi_cezzar", target: "karakas", type: "cemaat", description: "Sururi & Cezzar - Blog'da Karakaş Cemaati ile bağlantılı olarak etiketlenmiştir" },
+    { source: "sururi_cezzar", target: "haldun_dormen", type: "akrabalik", description: "Haldun Dormen tiyatro çevresi bağlantısı" },
+
+    // Fazıl Say
+    { source: "fazil_say", target: "kapanci", type: "cemaat", description: "Fazıl Say - Blog'da Kapancı Cemaati bağlamında etiketlenmiştir" },
+    { source: "fazil_say", target: "cemal_resit_rey", type: "akrabalik", description: "Türk klasik müzik çevresi bağlantısı" },
+
+    // Hıncal Uluç - Dinç Bilgin
+    { source: "hincal_uluc", target: "dinc_bilgin", type: "is_ortakligi", description: "Hıncal Uluç, Dinç Bilgin'in Sabah gazetesinde uzun yıllar köşe yazarlığı yapmıştır" },
+
+    // Kemal Derviş
+    { source: "kemal_dervis", target: "ecevit", type: "akrabalik", description: "Kemal Derviş, Bülent Ecevit hükümeti döneminde ekonomiden sorumlu bakan olarak görev yapmıştır" },
+
+    // Kenan Evren
+    { source: "kenan_evren", target: "kapanci", type: "cemaat", description: "Blog'da Kapancı Cemaati bağlamında etiketlenmiştir" },
+
+    // Hıfzı Topuz
+    { source: "hifzi_topuz", target: "kapanci", type: "cemaat", description: "Blog'da Kapancı Cemaati ile bağlantılı olarak etiketlenmiştir" },
+
+    // Abidin Daver
+    { source: "abidin_daver", target: "kapanci", type: "cemaat", description: "Blog'da Kapancı Cemaati ile bağlantılı olarak etiketlenmiştir" },
+
+    // Hasan Esat Işık
+    { source: "hasan_esat_isik", target: "kapanci", type: "cemaat", description: "Blog'da Kapancı Cemaati bağlamında etiketlenmiştir" },
+
+    // Nazlı Ilıcak
+    { source: "nazli_ilicak", target: "kapanci", type: "cemaat", description: "Blog'da Kapancı Cemaati bağlamında etiketlenmiştir" },
+
+    // Köprülü Ailesi
+    { source: "koprululer", target: "kapanci", type: "cemaat", description: "Köprülü Ailesi ve Kapancı Cemaati bağlantısı" },
+
+    // Banu Alkan
+    { source: "banu_alkan", target: "kapanci", type: "cemaat", description: "Blog'da Kapancı Cemaati bağlamında etiketlenmiştir" },
+
+    // Şahin Alpay
+    { source: "sahin_alpay", target: "kapanci", type: "cemaat", description: "Blog'da Sabetayist bağlantıları çerçevesinde etiketlenmiştir" },
+
+    // Şanar Yurdatapan
+    { source: "sanar_yurdatapan", target: "kapanci", type: "cemaat", description: "Blog'da Sabetayist bağlantıları çerçevesinde etiketlenmiştir" },
+
+    // Son kalan orphan düğümler
+    { source: "afife_jale", target: "yakubi", type: "cemaat", description: "Afife Jale - Blog'da Selanik kökenli Sabetayist çevrelerle bağlantılı olarak etiketlenmiştir" },
+    { source: "mahmut_yesari", target: "kapanci", type: "cemaat", description: "Mahmut Yesari - Blog'da Kapancı Cemaati bağlamında etiketlenmiştir" },
+    { source: "sevgi_soysal", target: "kapanci", type: "cemaat", description: "Sevgi Soysal - Blog'da Sabetayist bağlantıları çerçevesinde etiketlenmiştir" },
+    { source: "ugur_yucel", target: "kapanci", type: "cemaat", description: "Uğur Yücel - Blog'da Sabetayist bağlantıları çerçevesinde etiketlenmiştir" },
+    { source: "cahit_ucuk", target: "yakubi", type: "cemaat", description: "Cahit Uçuk - Blog'da Yakubi Cemaati bağlamında etiketlenmiştir" },
+    { source: "nur_vergin", target: "kapanci", type: "cemaat", description: "Nur Vergin - Blog'da Sabetayist bağlantıları çerçevesinde etiketlenmiştir" }
+];
