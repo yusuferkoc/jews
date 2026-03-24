@@ -145,6 +145,24 @@ function buildSidebar(dataArray, viewType) {
     const timelineContainer = document.getElementById('timeline');
     timelineContainer.innerHTML = '';
 
+    if (viewType === 'exile') {
+        const summaryDiv = document.createElement('div');
+        summaryDiv.className = 'exile-summary-box timeline-item';
+        summaryDiv.style.cssText = 'background: rgba(231, 76, 60, 0.05); border-left: 3px solid var(--accent); padding: 15px; margin-bottom: 25px; border-radius: 6px; cursor: default;';
+        summaryDiv.innerHTML = `
+            <h4 style="color: var(--accent); margin: 0 0 10px 0; font-size: 1rem; border-bottom: 1px solid rgba(231,76,60,0.2); padding-bottom: 8px;">Tarihsel Sürgünlerin Genel Nedenleri</h4>
+            <ul style="font-size: 0.85rem; color: var(--text-secondary); margin: 0; padding-left: 18px; line-height: 1.6;">
+                <li style="margin-bottom: 6px;"><b>Dini ve Etnik Farklılık:</b> Engizisyonlar, zorunlu din değiştirmeler ve anti-semitizm.</li>
+                <li style="margin-bottom: 6px;"><b>Siyasi Otorite ve İşgaller:</b> Antik çağdaki imparatorluk işgalleri (Asur, Babil, Roma) ve isyan bastırma politikaları.</li>
+                <li style="margin-bottom: 6px;"><b>Ekonomik Çıkarlar:</b> Hükümdarların Yahudilerin mallarına el koyma veya borçlarını silme motivasyonu.</li>
+                <li><b>Günah Keçisi İlan Edilme:</b> Veba salgını, kıtlık veya sosyal-ekonomik krizlerin sorumlusu olarak hedef gösterilmeleri.</li>
+            </ul>
+        `;
+        // Tıklama olayının (active class değişiminin) bu kutuyu etkilememesi için engelle
+        summaryDiv.addEventListener('click', (e) => e.stopPropagation());
+        timelineContainer.appendChild(summaryDiv);
+    }
+
     dataArray.forEach((itemData, index) => {
         const item = document.createElement('div');
         item.className = 'timeline-item';
@@ -428,28 +446,7 @@ function updateMapForEvent(event) {
             lineCap: 'round'
         }).addTo(currentLayerGroup);
 
-        // Calculate heading to place an arrow in the middle
-        const lat1 = event.origin.coords[0];
-        const lng1 = event.origin.coords[1];
-        const lat2 = dest.coords[0];
-        const lng2 = dest.coords[1];
-        const midLat = (lat1 + lat2) / 2;
-        const midLng = (lng1 + lng2) / 2;
-
-        // Calculate angle
-        const dy = lat2 - lat1;
-        const dx = Math.cos(Math.PI / 180 * lat1) * (lng2 - lng1);
-        let angle = Math.atan2(dy, dx) * 180 / Math.PI;
-        angle = -angle + 90; // Adjust for map rotation
-
-        // Add a directional arrow marker exactly in the middle of the line
-        const arrowIcon = L.divIcon({
-            className: 'path-arrow',
-            html: `<div style="transform: rotate(${angle}deg); color: #f1c40f; font-size: 20px; text-shadow: 0 0 5px #000;">&#10148;</div>`,
-            iconSize: [20, 20],
-            iconAnchor: [10, 10]
-        });
-        L.marker([midLat, midLng], { icon: arrowIcon, interactive: false }).addTo(currentLayerGroup);
+        // (Oklar kullanıcı isteğiyle kaldırıldı)
 
         // Hareket efekti (Animasyonlu noktalar/oklar)
         let dashOffset = 0;
@@ -471,10 +468,24 @@ function updateMapForEvent(event) {
 function updateDetailCard(event) {
     const card = document.getElementById('initial-card');
 
+    let reasonsHtml = '';
+    if (event.reasons && event.reasons.length > 0) {
+        reasonsHtml = `
+            <div style="margin: 15px 0; padding: 12px; background: rgba(231, 76, 60, 0.05); border-left: 3px solid var(--accent); border-radius: 4px;">
+                <h4 style="margin: 0 0 8px 0; color: var(--accent); font-size: 0.9rem;">Bu Sürgünün Temel Nedenleri:</h4>
+                <ul style="margin: 0; padding-left: 15px; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                    ${event.reasons.map(r => `<li style="margin-bottom: 4px;">${r}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+
     card.innerHTML = `
         <h2>${event.title}</h2>
         <p><b>Tarih:</b> ${event.displayYear}</p>
         <p>${event.description}</p>
+        
+        ${reasonsHtml}
         
         <div class="detail-tags">
             <span class="tag">${event.category}</span>
@@ -868,53 +879,251 @@ function showTurkeyData() {
 
     const bounds = L.latLngBounds([]);
 
-    markers = {};
-    const offsetTracker = {};
-    turkeyData.forEach((figure, index) => {
-        const displayCoords = getJitteredCoords(figure.coords, offsetTracker);
-        bounds.extend(displayCoords);
+    // KOORDİNAT BAZLI GRUPLAMA
+    const cityGroups = {};
+    const getCoordKey = (coords) => {
+        if (!coords) return null;
+        let parsed = typeof coords === 'string' ? JSON.parse(coords) : coords;
+        let lat = parsed[0];
+        let lng = parsed[1];
+        
+        // İstanbul koordinatlarını tekilleştirip tek noktada topla
+        if (lat >= 40.9 && lat <= 41.2 && lng >= 28.8 && lng <= 29.2) {
+            return `41.01,28.98`; 
+        }
+        return `${lat.toFixed(2)},${lng.toFixed(2)}`;
+    };
 
-        const turkeyIcon = L.divIcon({
-            className: 'marker-wrapper',
-            html: `<div class="inner-dot" style="width: 16px; height: 16px; background-color: #e74c3c; border: 2px solid #fff; box-shadow: 0 0 10px #e74c3c;"></div>`,
+    turkeyData.forEach((figure, index) => {
+        // Yer ve mekanları filtrele (Sinagog, Neve Şalom vb.)
+        if (figure.name.includes("Sinagog") || figure.name.includes("Şalom") || figure.name.includes("Hahambaşılık")) {
+            return;
+        }
+
+        const key = getCoordKey(figure.coords);
+        if (!key) return;
+        
+        // İstanbul için ana koordinatı ayarla ki marker tam merkeze gitsin
+        let groupCoords = typeof figure.coords === 'string' ? JSON.parse(figure.coords) : figure.coords;
+        if (key === "41.01,28.98") groupCoords = [41.01, 28.98];
+
+        if (!cityGroups[key]) cityGroups[key] = { coords: groupCoords, turkey: [], sabetay: [] };
+        cityGroups[key].turkey.push({ ...figure, originalIndex: index });
+    });
+
+    sabetayFamilies.forEach((family, index) => {
+        const key = getCoordKey(family.coords);
+        if (!key) return;
+
+        let groupCoords = typeof family.coords === 'string' ? JSON.parse(family.coords) : family.coords;
+        if (key === "41.01,28.98") groupCoords = [41.01, 28.98];
+
+        if (!cityGroups[key]) cityGroups[key] = { coords: groupCoords, turkey: [], sabetay: [] };
+        cityGroups[key].sabetay.push({ ...family, originalIndex: index });
+    });
+
+    // HARİTAYA ŞEHİR/KÜME İŞARETÇİLERİNİ EKLE
+    Object.keys(cityGroups).forEach(key => {
+        const group = cityGroups[key];
+        const totalCount = group.turkey.length + group.sabetay.length;
+        bounds.extend(group.coords);
+
+        // Küme İcon'u
+        const hasSabetay = group.sabetay.length > 0;
+        const hasTurkey = group.turkey.length > 0;
+        let borderColor = '#e74c3c'; // Default Turkey color
+        let glowColor = 'rgba(231, 76, 60, 0.5)';
+        if (hasSabetay && !hasTurkey) {
+            borderColor = '#9b59b6'; // Sabetay color
+            glowColor = 'rgba(155, 89, 182, 0.5)';
+        } else if (hasSabetay && hasTurkey) {
+            borderColor = '#d4af37'; // Mixed (Gold)
+            glowColor = 'rgba(212, 175, 55, 0.5)';
+        }
+
+        const clusterIcon = L.divIcon({
+            className: 'marker-wrapper cluster-marker',
+            html: `<div class="inner-dot" style="width: 32px; height: 32px; background-color: rgba(20, 20, 20, 0.8); border: 2px solid ${borderColor}; box-shadow: 0 0 15px ${glowColor}; border-radius: 50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:14px; pointer-events: auto; cursor: pointer;">${totalCount}</div>`,
             iconSize: [44, 44],
             iconAnchor: [22, 22]
         });
 
-        const imageId = `img-trk-${figure.wikiPage || figure.name}`.replace(/[^a-zA-Z0-9-]/g, '-');
-        const imageHtml = `<div id="${imageId}-wrap" style="width:100%; height:140px; background:rgba(0,0,0,0.2); border-radius:6px; display:flex; align-items:center; justify-content:center; margin-bottom:12px; overflow:hidden;"><span style="color:var(--text-secondary); font-size:0.8rem;">Yükleniyor...</span></div>`;
+        const marker = L.marker(group.coords, { icon: clusterIcon, interactive: true }).addTo(currentLayerGroup);
 
-        const popup = L.popup({ maxWidth: 300 })
-            .setContent(`${imageHtml}<b>${figure.name}</b><br><span style="color: #e74c3c; font-weight: bold;">${figure.highlight}</span><br><div style="margin: 5px 0; font-size: 0.85em; color: var(--text-secondary);">📍 ${figure.location} • ⏳ ${figure.era}</div><small>${figure.description}</small>`);
+        marker.on('click', (e) => {
+            L.DomEvent.stopPropagation(e);
+            
+            const card = document.getElementById('initial-card');
+            
+            // Şehir İsmini Tahmin Et
+            let cityName = "Şehir Bağı";
+            if (key.startsWith("41.01")) cityName = "İstanbul";
+            else if (key.startsWith("38.42")) cityName = "İzmir";
+            else if (key.startsWith("40.64")) cityName = "Selanik";
+            else if (key.startsWith("40.18")) cityName = "Bursa";
+            else if (key.startsWith("41.67") || key.startsWith("41.68")) cityName = "Edirne";
+            else if (key.startsWith("39.92")) cityName = "Ankara";
+            else if (key.startsWith("36.89")) cityName = "Antalya";
+            else if (key.startsWith("42.73")) cityName = "Balkanlar";
 
-        const marker = L.marker(displayCoords, { icon: turkeyIcon })
-            .bindPopup(popup)
-            .addTo(currentLayerGroup);
+            card.innerHTML = `
+                <div style="padding: 5px;">
+                    <h3 style="margin: 0 0 15px 0; color: #d4af37; border-bottom: 1px solid rgba(212, 175, 55, 0.3); padding-bottom: 10px; font-size: 1.2rem;">📍 ${cityName} <span style="font-size: 0.9rem; color: var(--text-secondary);">(${totalCount} Kişi/Aile)</span></h3>
+                    
+                    <div style="max-height: 55vh; overflow-y: auto; padding-right: 5px;" class="city-details-scroll">
+                        ${group.turkey.length > 0 ? `
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="color: #e74c3c; margin: 0 0 12px 0; font-size: 0.95rem; display: flex; align-items: center;"><span style="font-size: 1.2rem; margin-right: 6px;">🕎</span> Türkiye Yahudileri (${group.turkey.length})</h4>
+                            ${group.turkey.map(t => `
+                                <div class="city-list-item-jewish" style="cursor:pointer;" onclick="document.querySelectorAll('.timeline-item')[${t.originalIndex}].click(); document.querySelectorAll('.timeline-item')[${t.originalIndex}].scrollIntoView({ behavior: 'smooth', block: 'center' });">
+                                    <div style="font-weight: 600; font-size: 1rem; color: #fff;">${t.name}</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">${t.highlight || t.category}</div>
+                                </div>
+                            `).join('')}
+                        </div>` : ''}
 
-        // Fetch image from Wikipedia REST API when popup opens
-        if (figure.wikiPage) {
-            marker.on('popupopen', () => {
-                const wrap = document.getElementById(`${imageId}-wrap`);
-                if (!wrap || wrap.dataset.loaded) return;
-                wrap.dataset.loaded = 'true';
-
-                fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(figure.wikiPage)}`)
-                    .then(r => r.json())
-                    .then(data => {
-                        const imgUrl = data.thumbnail && data.thumbnail.source;
-                        if (imgUrl && wrap) {
-                            wrap.innerHTML = `<img src="${imgUrl}" alt="${figure.name}" style="width:100%;height:140px;object-fit:cover;border-radius:6px;object-position:center 25%;">`;
-                        } else if (wrap) {
-                            wrap.style.display = 'none';
-                        }
-                    })
-                    .catch(() => { if (wrap) wrap.style.display = 'none'; });
-            });
-        }
-        markers[index] = marker;
+                        ${group.sabetay.length > 0 ? `
+                        <div>
+                            <h4 style="color: #8e44ad; margin: 0 0 12px 0; font-size: 0.95rem; display: flex; align-items: center;"><span style="font-size: 1.2rem; margin-right: 6px;">🔗</span> Sabetay Aileleri (${group.sabetay.length})</h4>
+                            ${group.sabetay.map(s => `
+                                <div class="city-list-item-sabbatean" style="cursor:pointer;" onclick="document.querySelectorAll('.sabetay-sidebar-item')[${s.originalIndex}].click(); document.querySelectorAll('.sabetay-sidebar-item')[${s.originalIndex}].scrollIntoView({ behavior: 'smooth', block: 'center' });">
+                                    <div style="font-weight: 600; font-size: 1rem; color: #fff;">${s.name}</div>
+                                    <div style="font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 4px; line-height: 1.4;">${s.description.substring(0, 70)}...</div>
+                                </div>
+                            `).join('')}
+                        </div>` : ''}
+                    </div>
+                    
+                    <button class="return-turkey-btn" onclick="showTurkeyData()" style="margin-top: 20px; width: 100%; border-radius: 6px; cursor: pointer; border: 1px solid rgba(212, 175, 55, 0.3); background: rgba(212, 175, 55, 0.1); color: var(--text-primary); padding: 10px; transition: all 0.2s;">
+                        ← Paneli Temizle
+                    </button>
+                </div>
+            `;
+            
+            if (window.innerWidth < 768) {
+                card.classList.add('mobile-active');
+                document.getElementById('mobile-overlay').classList.add('active');
+            }
+        });
     });
 
     buildSidebar(turkeyData, 'turkey');
+
+    // SABETAYLARI TÜRKİYE SEKMESİNE EKLEME
+    const timelineContainer = document.getElementById('timeline');
+    
+    // Ayraç Ekle
+    const divider = document.createElement('div');
+    divider.className = 'sabetay-divider';
+    divider.innerHTML = '<span>Sabetaylar</span>';
+    timelineContainer.appendChild(divider);
+
+    // Kategori yapılandırması (Sabetay için)
+    const categoryConfig = {
+        tarih:   { label: 'Tarihi Aileler', color: '#e74c3c', icon: '🏛️' },
+        siyaset: { label: 'Siyaset & Devlet', color: '#9b59b6', icon: '🏛️' },
+        is:      { label: 'İş Dünyası', color: '#d4af37', icon: '💼' },
+        medya:   { label: 'Medya & Sanat', color: '#3498db', icon: '🎨' },
+        akademi: { label: 'Akademi', color: '#2ecc71', icon: '📚' }
+    };
+
+    const connectionColors = {
+        evlilik: { color: '#e74c3c', label: 'Evlilik' },
+        akrabalik: { color: '#9b59b6', label: 'Akrabalık' },
+        is_ortakligi: { color: '#d4af37', label: 'İş Ortaklığı' },
+        cemaat: { color: '#3498db', label: 'Cemaat' }
+    };
+
+    // Sabetay Ailelerini Sidebar'a Ekle
+    sabetayFamilies.forEach((family, index) => {
+        const item = document.createElement('div');
+        item.className = 'timeline-item sabetay-sidebar-item';
+        const cfg = categoryConfig[family.category] || categoryConfig.tarih;
+        item.innerHTML = `
+            <div style="display: flex; align-items:center;">
+                <div style="width:40px; height:40px; border-radius:50%; background: ${cfg.color}15; border: 1px solid ${cfg.color}30; margin-right: 12px; flex-shrink: 0; display:flex; align-items:center; justify-content:center;">
+                    <span style="font-size:1rem;">🔗</span>
+                </div>
+                <div>
+                    <div class="timeline-year" style="color: #8e44ad; font-size: 0.75rem; margin-bottom:2px;">${cfg.label}</div>
+                    <h3 class="timeline-title" style="margin-bottom:0; font-size:0.95rem;">${family.name}</h3>
+                    <p class="timeline-summary" style="margin-top:2px; font-size:0.75rem;">Sabetayist Cemaat/Aile</p>
+                </div>
+            </div>
+        `;
+        
+        item.addEventListener('click', () => {
+            closeSidebarOnMobile();
+            document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
+            item.classList.add('active');
+            
+            // Seçili Sabetay kişisinin detaylarını detail-card'da göster
+            // Üyeler
+            let membersHtml = '';
+            if (family.members && family.members.length > 0) {
+                membersHtml = '<div class="sabetay-detail-section-title">Bilinen Üyeler</div>';
+                family.members.forEach(m => {
+                    membersHtml += `<span class="sabetay-member-tag">${m}</span>`;
+                });
+            }
+
+            // Bağlantılar
+            let connectionsHtml = '';
+            const relatedConns = sabetayConnections.filter(c => c.source === family.id || c.target === family.id);
+            if (relatedConns.length > 0) {
+                connectionsHtml = '<div class="sabetay-detail-section-title">Ağ Bağlantıları</div>';
+                relatedConns.forEach(conn => {
+                    const otherId = conn.source === family.id ? conn.target : conn.source;
+                    const other = sabetayFamilies.find(f => f.id === otherId);
+                    if (!other) return;
+                    const connCfg = connectionColors[conn.type] || connectionColors.akrabalik;
+                    const typeLabels = { evlilik: 'Evlilik', akrabalik: 'Akrabalık', is_ortakligi: 'İş Ort.', cemaat: 'Cemaat' };
+                    connectionsHtml += `
+                        <div class="sabetay-connection-item" style="margin-bottom: 8px;">
+                            <span class="sabetay-connection-type" style="background:${connCfg.color}20;color:${connCfg.color};border:1px solid ${connCfg.color}40;">${typeLabels[conn.type] || conn.type}</span>
+                            <span class="sabetay-connection-name" style="color:var(--text-primary); font-weight:600; font-size:0.9rem;">${other.name}</span>
+                            <div class="sabetay-connection-desc" style="font-size:0.8rem; color:var(--text-secondary); margin-top:3px;">${conn.description}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                connectionsHtml = '<div class="sabetay-detail-section-title">Bağlantı bulunamadı</div>';
+            }
+
+            const card = document.getElementById('initial-card');
+            card.innerHTML = `
+                <h2 style="color: #8e44ad;"><span style="font-size:1.2rem; margin-right:5px;">${cfg.icon}</span>${family.name}</h2>
+                <div style="margin-bottom: 15px;">
+                    <span class="tag" style="background: rgba(142,68,173,0.1); border-color: rgba(142,68,173,0.3); color: #8e44ad;">${cfg.label}</span>
+                </div>
+                <p style="margin-bottom: 20px;">${family.description}</p>
+                ${membersHtml}
+                ${connectionsHtml}
+                <button onclick="resetMap()" style="
+                    margin-top: 20px;
+                    background: transparent;
+                    border: 1px solid var(--border-color);
+                    color: var(--text-secondary);
+                    padding: 8px 15px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-family: var(--font-sans);
+                    font-size: 0.8rem;
+                    transition: all 0.2s;
+                    display: block;
+                    width: 100%;
+                    text-align: center;
+                " onmouseover="this.style.color='var(--text-primary)'; this.style.borderColor='var(--accent)'" 
+                   onmouseout="this.style.color='var(--text-secondary)'; this.style.borderColor='var(--border-color)'">
+                    ← Tüm Türkiye Verisine Dön
+                </button>
+            `;
+            
+            // Eğer haritada marker yoksa (Sabetayların koordinatı yok), haritada Türkiye genel görünümünü koru
+            // map.flyToBounds() çağırmaya gerek yok.
+        });
+        timelineContainer.appendChild(item);
+    });
 
     // Update Detail Card
     const card = document.getElementById('initial-card');
@@ -924,6 +1133,7 @@ function showTurkeyData() {
         <div class="detail-tags">
             <span class="tag">Anadolu Sefaradları</span>
             <span class="tag">${turkeyData.length} Ana Merkez</span>
+            <span class="tag" style="background: rgba(142,68,173,0.1); border-color: rgba(142,68,173,0.3); color: #8e44ad;">${sabetayFamilies.length} Sabetay Ailesi</span>
         </div>
         <button onclick="resetMap()" style="
             margin-top: 20px;

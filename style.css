@@ -1340,3 +1340,177 @@ body.light-theme .sabetay-detail-panel {
         gap: 8px;
     }
 }
+/* =========================================
+   SABETAY SIDEBAR KISMI (T�RKIYE SEKMESI)
+   ========================================= */
+
+.sabetay-divider {
+    padding: 20px 30px 10px;
+    color: #8e44ad;
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(142, 68, 173, 0.2);
+    margin-top: 10px;
+    background: linear-gradient(90deg, transparent, rgba(142, 68, 173, 0.05), transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.sabetay-divider::before, .sabetay-divider::after {
+    content: '';
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, transparent, rgba(142, 68, 173, 0.5));
+}
+
+.sabetay-divider::after {
+    background: linear-gradient(270deg, transparent, rgba(142, 68, 173, 0.5));
+}
+
+.sabetay-sidebar-item {
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.sabetay-sidebar-item:hover {
+    background-color: rgba(142, 68, 173, 0.05) !important;
+    border-left-color: rgba(142, 68, 173, 0.4) !important;
+}
+
+.sabetay-sidebar-item.active {
+    background-color: rgba(142, 68, 173, 0.1) !important;
+    border-left-color: #8e44ad !important;
+}
+
+body.light-theme .sabetay-sidebar-item:hover {
+    background-color: rgba(142, 68, 173, 0.03) !important;
+}
+body.light-theme .sabetay-sidebar-item.active {
+    background-color: rgba(142, 68, 173, 0.08) !important;
+}
+
+.sabetay-member-tag {
+    display: inline-block;
+    background: rgba(142, 68, 173, 0.1);
+    color: #9b59b6;
+    border: 1px solid rgba(142, 68, 173, 0.3);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.sabetay-connection-item {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+body.light-theme .sabetay-connection-item {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.sabetay-connection-type {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-right: 8px;
+    display: inline-block;
+    text-transform: uppercase;
+}
+
+.sabetay-connection-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.sabetay-connection-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 5px;
+    line-height: 1.4;
+}
+
+.sabetay-detail-section-title {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: #8e44ad;
+    margin: 20px 0 10px 0;
+    border-bottom: 1px solid rgba(142, 68, 173, 0.2);
+    padding-bottom: 5px;
+}
+
+
+/* ŞEHİR ÖZETİ - DETAIL CARD LİSTE STİLLERİ */
+
+.city-details-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.city-details-scroll::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+.city-details-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+}
+.city-details-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.4);
+}
+
+.city-list-item-jewish {
+    background: rgba(0, 0, 0, 0.4);
+    border-left: 3px solid #e74c3c;
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+    border-top: 1px solid rgba(231, 76, 60, 0.1);
+    border-right: 1px solid rgba(231, 76, 60, 0.1);
+    border-bottom: 1px solid rgba(231, 76, 60, 0.1);
+}
+
+.city-list-item-jewish:hover {
+    background: rgba(231, 76, 60, 0.1);
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border-color: rgba(231, 76, 60, 0.4);
+}
+
+.city-list-item-sabbatean {
+    background: rgba(0, 0, 0, 0.4);
+    border-left: 3px solid #8e44ad;
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+    border-top: 1px solid rgba(142, 68, 173, 0.1);
+    border-right: 1px solid rgba(142, 68, 173, 0.1);
+    border-bottom: 1px solid rgba(142, 68, 173, 0.1);
+}
+
+.city-list-item-sabbatean:hover {
+    background: rgba(142, 68, 173, 0.15);
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border-color: rgba(142, 68, 173, 0.4);
+}
+
+.cluster-marker .inner-dot {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cluster-marker:hover .inner-dot {
+    transform: scale(1.15);
+    box-shadow: 0 0 20px rgba(255,255,255,0.3) !important;
+}
